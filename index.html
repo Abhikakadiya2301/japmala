@@ -150,7 +150,7 @@ header{padding-bottom:7px}.brand{font-size:1.18rem}.subbrand{font-size:.6rem}
 <svg class="ring" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg"><defs><path id="ringPath" d="M 220,220 m -165,0 a165,165 0 1,1 330,0 a165,165 0 1,1 -330,0"/></defs><circle cx="220" cy="220" r="188"/><text><textPath href="#ringPath">सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम ·</textPath></text></svg>
 <div id="particles"></div>
 <svg class="infinity" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><path class="infinity-path" d="M 200 100 C 169 59 145 43 108 43 C 67 43 47 70 47 100 C 47 130 67 157 108 157 C 145 157 169 141 200 100 C 231 59 255 43 292 43 C 333 43 353 70 353 100 C 353 130 333 157 292 157 C 255 157 231 141 200 100"/><path class="infinity-glow" pathLength="1000" d="M 200 100 C 169 59 145 43 108 43 C 67 43 47 70 47 100 C 47 130 67 157 108 157 C 145 157 169 141 200 100 C 231 59 255 43 292 43 C 333 43 353 70 353 100 C 353 130 333 157 292 157 C 255 157 231 141 200 100"/></svg>
-<div class="number done"><strong id="count">0</strong><span>Jap done</span></div><div class="number goal"><strong id="goal">108</strong><span>Target</span></div>
+<div class="number done"><strong id="count">0</strong></div><div class="number goal"><strong id="goal">108</strong></div>
 </div>
 <h1 class="mantra">सीता राम</h1><div class="roman">SITA RAM</div>
 <div class="summary"><span id="progressLabel">0 / 108 repetitions</span> · <span id="malas">0 completed malas</span></div>
@@ -171,13 +171,13 @@ header{padding-bottom:7px}.brand{font-size:1.18rem}.subbrand{font-size:.6rem}
 <div class="inputs">
 <div><label for="targetSelect">Target japs</label><select id="targetSelect"><option value="11">11</option><option value="21">21</option><option value="51">51</option><option value="108">108</option><option value="1008">1008</option><option value="custom">Custom goal</option></select></div>
 <div id="customBox" hidden><label for="customTarget">Custom goal</label><input id="customTarget" type="number" min="1" max="1000000" value="108"></div>
-<div><label for="syncMode">Auto-count sync</label><select id="syncMode"><option value="rhythm">Rhythm (estimated)</option><option value="exact">Exact time marks</option></select></div>
+<div><label for="syncMode">Auto-count method</label><select id="syncMode"><option value="rhythm">Automatic (estimated)</option><option value="exact">Exact time marks</option></select></div><div id="paceBox"><label for="paceSeconds">Estimated seconds per Jap</label><input id="paceSeconds" type="number" min="0.6" max="45" step="0.1" value="2.2"></div>
 </div>
-<p id="syncHint" class="note">To sync, play the song and tap Mark jap after two consecutive mantra repetitions.</p>
+<p id="syncHint" class="note">Automatic counting starts when the song plays. Its initial rhythm is an estimate, not actual vocal recognition. Tap Mark jap at the end of two consecutive complete repetitions to synchronize it.</p>
 <div class="cal-btns"><button id="clearSync" type="button">Clear sync</button><button id="undo" type="button">↶ Undo jap</button><button id="reset" type="button">Reset count</button></div>
 <div class="section-label hint">Your progress</div>
 <div class="metrics"><div><strong id="session">0</strong><span>This visit</span></div><div><strong id="lifetime">0</strong><span>All time</span></div><div><strong id="remaining">108</strong><span>Remaining</span></div></div>
-<p class="note">The site stores counts and synchronization in this browser. In rhythm mode, automatic counts are estimates and may drift with the song. Exact mode records the end of each complete repetition once; future playback loops reuse those timestamps. Skipped parts of the video are not counted.</p>
+<p class="note">Automatic counts are time-based approximations, not speech recognition. Music, introductions, and changes in chant pace may cause incorrect counts. For higher precision, mark two repetitions or use Exact time marks to save each completion once. Skipped parts of the video are not counted. Counts are saved in this browser.</p>
 <p class="note">YouTube controls the recording. Some browsers restrict its playback or embedding; the audio is not downloaded or redistributed.</p>
 </div></dialog>
 </div>
@@ -193,44 +193,48 @@ let lifetime=validCount(old.lifetime)?old.lifetime:count;
 let target=validTarget(old.target)?old.target:(validTarget(original.target)?original.target:108);
 let mode=old.mode==='exact'?'exact':'rhythm';
 let phase=old.phase&&Number.isFinite(old.phase.a)&&Number.isFinite(old.phase.b)&&old.phase.b>old.phase.a?{a:old.phase.a,b:old.phase.b}:null;
+const DEFAULT_SECONDS=2.2; // Provisional approximation; not measured from this recording.
+let paceSeconds=Number.isFinite(old.paceSeconds)&&old.paceSeconds>=.6&&old.paceSeconds<=45?old.paceSeconds:DEFAULT_SECONDS;
+const activePhase=()=>phase||{a:0,b:paceSeconds};
 let firstTap=null;
 let cues=Array.isArray(old.cues)?old.cues.filter(x=>Number.isFinite(x)&&x>=0).sort((a,b)=>a-b).slice(0,10000):[];
 let exactReady=!!old.exactReady&&cues.length>0;
+if(mode==='exact'&&!exactReady)mode='rhythm'; // Start auto counting for uncalibrated visitors.
 let recording=mode==='exact'&&!exactReady;
 let player=null,ready=false,isPlaying=false,lastTime=null,lastWall=null,nextBeat=0,nextCue=0,session=0,manualChanges=0;
 let interval=null;
 function validCount(v){return Number.isSafeInteger(v)&&v>=0&&v<=1000000000}
 function validTarget(v){return Number.isSafeInteger(v)&&v>0&&v<=1000000}
-function store(){try{localStorage.setItem(KEY,JSON.stringify({count,lifetime,target,mode,phase,cues,exactReady}))}catch{status('Browser storage is unavailable; progress may not persist.')}}
+function store(){try{localStorage.setItem(KEY,JSON.stringify({count,lifetime,target,mode,phase,paceSeconds,cues,exactReady}))}catch{status('Browser storage is unavailable; progress may not persist.')}}
 function status(v){$('status').textContent=v}
 function draw(){const n=count,completed=n%108;$('count').textContent=n.toLocaleString();$('goal').textContent=target.toLocaleString();$('progressLabel').textContent=n.toLocaleString()+' / '+target.toLocaleString()+' repetitions';$('malas').textContent=Math.floor(n/108)+' completed malas';$('progress').setAttribute('aria-valuemax',target);$('progress').setAttribute('aria-valuenow',Math.min(n,target));$('fill').style.width=Math.min(100,100*n/target)+'%';$('session').textContent=session.toLocaleString();$('lifetime').textContent=lifetime.toLocaleString();$('remaining').textContent=Math.max(0,target-n).toLocaleString();const holder=$('beads');holder.replaceChildren();const frag=document.createDocumentFragment();for(let i=0;i<108;i++){const x=document.createElement('span');x.className='bead'+(i<completed?' active':'');frag.appendChild(x)}holder.appendChild(frag)}
 function addOne(){count++;lifetime++;session++;store();draw();if(count===target)status('🙏 Target reached. Jai Shri Ram!')}
 function now(){try{return ready?player.getCurrentTime():NaN}catch{return NaN}}
 function state(){try{return ready?player.getPlayerState():-1}catch{return -1}}
 function playing(v){isPlaying=v;$('stage').classList.toggle('playing',v);$('play').textContent=v?'❚❚ Pause':'▶ Play mantra'}
-function resetScan(t){nextBeat=0;nextCue=0;if(phase){const p=phase.b-phase.a;nextBeat=Math.max(0,Math.ceil((t-phase.a-0.000001)/p))}while(nextCue<cues.length&&cues[nextCue]<t-.001)nextCue++}
+function resetScan(t){nextBeat=0;nextCue=0;if(mode==='rhythm'){const p=activePhase(),step=p.b-p.a;nextBeat=Math.max(0,Math.ceil((t-p.a-0.000001)/step))}while(nextCue<cues.length&&cues[nextCue]<t-.001)nextCue++}
 function tick(){if(!ready||!isPlaying||state()!==1)return;const t=now();if(!Number.isFinite(t))return;const wall=performance.now();if(lastTime===null){resetScan(t);lastTime=t;lastWall=wall;return}const dt=t-lastTime,elapsed=(wall-lastWall)/1000;
 if(dt<-.6){resetScan(Math.max(0,t-.3));lastTime=t;lastWall=wall;return}
 if(dt>Math.max(1.6,elapsed+1.35)){resetScan(t+.02);lastTime=t;lastWall=wall;status('Video seek detected. Skipped chants were not counted.');return}
-if(mode==='rhythm'&&phase){const step=phase.b-phase.a;let events=0;while(nextBeat<1000000&&phase.a+step*nextBeat<=t+.02&&events<300){const mark=phase.a+step*nextBeat;if(mark>lastTime+.005){addOne();events++}nextBeat++}}
+if(mode==='rhythm'){const p=activePhase(),step=p.b-p.a;let events=0;while(nextBeat<1000000&&p.a+step*nextBeat<=t+.02&&events<300){const mark=p.a+step*nextBeat;if(mark>lastTime+.005){addOne();events++}nextBeat++}}
 if(mode==='exact'&&exactReady){let events=0;while(nextCue<cues.length&&cues[nextCue]<=t+.02&&events<300){if(cues[nextCue]>lastTime+.005){addOne();events++}nextCue++}}
 lastTime=t;lastWall=wall}
 function clearTimes(){phase=null;firstTap=null;cues=[];exactReady=false;recording=mode==='exact';lastTime=null;nextBeat=0;nextCue=0;store();hint()}
-function hint(){if(mode==='rhythm'){$('syncHint').textContent=phase?'Rhythm synced at '+(phase.b-phase.a).toFixed(2)+' seconds per jap. Counting is estimated, and timing may drift when the tune changes. Tap Clear sync to recalibrate.':firstTap!==null?'First chant marked. Tap again when the next complete “Sita Ram” is sung.':'Play the video and tap “Mark completed jap” at the end of two consecutive complete Sita Ram chants. Then following repetitions count automatically by estimated timing.'}else{$('syncHint').textContent=exactReady?'Exact time markers saved ('+cues.length+'). Jap will increase as each marked point plays on the next loops. Choose Clear sync to re-record.':'Exact learning: play from the start and tap once at each full Sita Ram completion. This first listen counts your taps; after the video ends the recorded timestamps repeat automatically.'}}
+function hint(){$('paceBox').hidden=mode!=='rhythm';if(mode==='rhythm'){$('syncHint').textContent=phase?'Using two marked repetitions: '+(phase.b-phase.a).toFixed(2)+' seconds per jap (estimated). It can drift if the tune changes. Clear sync to recalibrate.':firstTap!==null?'Automatic estimates continue. Mark the end of the next full “Sita Ram” to complete calibration.':'Counting starts automatically while playing, with an approximate '+paceSeconds.toFixed(1)+' seconds per Jap. This is NOT verified song timing. Mark two consecutive completed “Sita Ram” chants for better synchronization.'}else{$('syncHint').textContent=exactReady?'Exact time markers saved ('+cues.length+'). Jap will increase as each marked point plays on the next loops. Choose Clear sync to re-record.':'Exact learning: play from the start and tap once at each full Sita Ram completion. This first listen counts your taps; after the video ends the recorded timestamps repeat automatically.'}}
 $('play').addEventListener('click',()=>{if(!ready){status('YouTube player is still loading. You may also use its built-in Play button.');return}if(state()===1){player.pauseVideo()}else{player.playVideo()}});
 $('plus').addEventListener('click',()=>{manualChanges++;addOne();if(count!==target)status('Manual jap counted.')});
 $('undo').addEventListener('click',()=>{if(count<=0)return;count--;lifetime=Math.max(0,lifetime-1);session=Math.max(0,session-1);store();draw();status('Last jap removed.')});
 $('reset').addEventListener('click',()=>{if(!confirm('Reset the jap count to zero? Your timing calibration will remain saved.'))return;count=0;session=0;store();draw();status('Count reset; synchronization preserved.')});
 $('targetSelect').addEventListener('change',e=>{if(e.target.value==='custom'){$('customBox').hidden=false;target=validTarget(+$('customTarget').value)?+$('customTarget').value:108}else{$('customBox').hidden=true;target=+e.target.value}store();draw()});
 $('customTarget').addEventListener('change',e=>{target=Math.min(1000000,Math.max(1,Math.floor(+e.target.value||108)));e.target.value=target;store();draw()});
-$('syncMode').addEventListener('change',e=>{mode=e.target.value;clearTimes();status(mode==='exact'?'Exact recording selected. Play from the beginning and mark every completed jap.':'Rhythm mode selected. Mark two completed japs to calibrate.')});
+$('syncMode').addEventListener('change',e=>{mode=e.target.value;clearTimes();status(mode==='exact'?'Exact recording selected. Play from the beginning and mark every completed jap.':'Automatic estimated counting enabled. Press Play to start.')});
 $('clearSync').addEventListener('click',()=>{clearTimes();status('Synchronization cleared. The jap counter was preserved.')});
 $('mark').addEventListener('click',()=>{const t=now();if(!Number.isFinite(t)||state()!==1){status('Play the YouTube video before marking a chant.');return}
-if(mode==='rhythm'){if(phase){status('Rhythm already calibrated. Use Clear sync to start again.');return}if(firstTap===null){firstTap=t;addOne();status('First jap marked. Tap at the end of the next full jap.')}else{const gap=t-firstTap;if(gap<.6||gap>45){status('Marks must be between 0.6 and 45 seconds apart. Please try the second mark again.');return}phase={a:firstTap,b:t};firstTap=null;addOne();nextBeat=2;lastTime=t;lastWall=performance.now();store();status('Rhythm synchronized: one jap per '+gap.toFixed(2)+' seconds (estimate).')}hint()}
+if(mode==='rhythm'){if(phase){status('Rhythm already calibrated. Use Clear sync to start again.');return}if(firstTap===null){firstTap=t;status('First timing mark saved. Tap again after the next completed jap.')}else{const gap=t-firstTap;if(gap<.6||gap>45){status('Marks must be between 0.6 and 45 seconds apart. Please try the second mark again.');return}phase={a:firstTap,b:t};firstTap=null;nextBeat=2;lastTime=t;lastWall=performance.now();store();status('Rhythm synchronized: approximately one jap every '+gap.toFixed(2)+' seconds. Previous estimated counts remain unchanged.')}hint()}
 else{if(exactReady){status('Exact markers already saved. Clear sync to relearn them.');return}if(cues.length&&t<=cues[cues.length-1]+.35){status('Wait until the next complete Sita Ram before marking.');return}cues.push(t);addOne();store();status('Marked completion at '+t.toFixed(1)+'s · '+cues.length+' cue points saved.');hint()}}
 );
 function onYTReady(ev){ready=true;player=ev.target;$('play').disabled=false;status('Ready. Play Sita Ram, then synchronize jap completion with the tune.');hint();lastTime=null}
-function onYTState(ev){const Y=window.YT&&window.YT.PlayerState;if(!Y)return;if(ev.data===Y.PLAYING){playing(true);lastTime=null;lastWall=null;if(mode==='exact'&&recording&&cues.length===0)status('Mark each complete Sita Ram to learn exact timings.');else if(mode==='rhythm'&&!phase)status('Mark two consecutive completed chants to sync auto-counting.');}
+function onYTState(ev){const Y=window.YT&&window.YT.PlayerState;if(!Y)return;if(ev.data===Y.PLAYING){playing(true);lastTime=null;lastWall=null;if(mode==='exact'&&recording&&cues.length===0)status('Mark each complete Sita Ram to learn exact timings.');else if(mode==='rhythm'&&!phase)status('Auto-counting approximately every '+paceSeconds.toFixed(1)+' seconds (not verified). Mark two repetitions to sync.');else if(mode==='rhythm')status('Auto-counting using your marked chant interval.');}
 else{playing(false);lastTime=null;lastWall=null;
 if(ev.data===Y.ENDED){if(mode==='exact'&&recording&&cues.length){recording=false;exactReady=true;store();hint();status('Exact timestamps saved. Future loops count automatically.')}resetScan(0);try{player.seekTo(0,true);player.playVideo()}catch{status('The video ended; press Play to loop again.')}}}}
 function onYTError(event){playing(false);status('This YouTube recording is unavailable in the embedded player (error '+event.data+'). Open it directly on YouTube; automatic synchronization needs the embed.')}
@@ -242,6 +246,8 @@ if(['11','21','51','108','1008'].includes(String(target))){$('targetSelect').val
 $('openSettings').addEventListener('click',()=>{$('settingsDialog').showModal()});
 $('closeSettings').addEventListener('click',()=>{$('settingsDialog').close()});
 $('settingsDialog').addEventListener('click',e=>{if(e.target===$('settingsDialog'))e.target.close()});
+$('paceSeconds').value=paceSeconds;
+$('paceSeconds').addEventListener('change',e=>{let v=Number(e.target.value);paceSeconds=Number.isFinite(v)?Math.min(45,Math.max(.6,v)):DEFAULT_SECONDS;e.target.value=paceSeconds;phase=null;firstTap=null;resetScan(Math.max(0,now()||0));store();hint();status('Auto-count estimate set to one jap every '+paceSeconds.toFixed(1)+' seconds.')});
 $('syncMode').value=mode;draw();hint();interval=setInterval(tick,120);
 })();
 </script></body></html>
