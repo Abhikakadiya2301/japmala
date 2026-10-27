@@ -1,14 +1,91 @@
 <!doctype html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#211b19"><meta name="description" content="JapMala: a mindful digital mantra chanting counter with custom goals and audio loops."><title>JapMala — Every mantra, every jap</title>
 <style>
-:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f5e9dc;background:#171513}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#543a29 0%,#271f1b 38%,#171513 75%)}.shell{max-width:860px;margin:auto;padding:24px 20px 72px}header{display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{font:700 1.5rem Georgia,serif;color:#f0c78b}.small{font-size:.85rem;color:#c8b7a4}.hero{text-align:center;margin:60px auto 28px}.lotus{font-size:3.7rem;line-height:1.2}.hero h1{font:normal clamp(2.5rem,8vw,4.8rem) Georgia,serif;margin:12px 0;color:#f6d7aa}.hero p{color:#ccbba9;margin:0}.card{background:#2c2522;border:1px solid #66503d;border-radius:22px;padding:26px;box-shadow:0 18px 50px #0003;margin-top:22px}.eyebrow{text-transform:uppercase;letter-spacing:.19em;color:#d2ab7c;font-size:.7rem;font-weight:700}.mantra{text-align:center;font:normal clamp(2rem,7vw,3.7rem) Georgia,serif;color:#ffd8a0;margin:24px 0 6px}.translit{text-align:center;color:#c9b29a;margin-bottom:28px}.count{text-align:center;font:normal clamp(4rem,14vw,7rem) Georgia,serif;color:#fff1d9;line-height:1.1;margin:8px 0}.count-sub{text-align:center;color:#d0bca6}.bar{height:9px;border-radius:20px;background:#4b3c31;overflow:hidden;margin:20px 0}.bar-fill{height:100%;background:linear-gradient(90deg,#bd8150,#f2ce91);width:0;transition:width .2s}.beads{display:grid;grid-template-columns:repeat(18,1fr);gap:5px;max-width:540px;margin:22px auto}.bead{aspect-ratio:1;border:1px solid #755e49;background:#4a3930;border-radius:50%}.bead.active{background:#f2c485;border-color:#f2c485;box-shadow:0 0 8px #dcad65aa}.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin:26px 0 8px}button,select,input{font:inherit}button{border:1px solid #836547;border-radius:999px;background:#44362d;color:#fbe8d0;padding:12px 20px;cursor:pointer}button:hover{background:#594435}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #e0b578;outline-offset:3px}.primary{background:#e8bc7e;color:#291d14;border-color:#e8bc7e;font-weight:700}.primary:hover{background:#f2cd99}.ghost{background:transparent}.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}label{display:block;color:#d8c3aa;font-size:.9rem;margin-bottom:8px}select,input[type=number],input[type=text]{width:100%;background:#191715;border:1px solid #79604a;border-radius:12px;padding:12px;color:#fff3e5;min-width:0}input[type=file]{max-width:100%;font-size:.83rem}.note{color:#bfac98;font-size:.86rem;line-height:1.55;margin:12px 0 0}.stats{display:flex;justify-content:space-around;text-align:center;gap:14px;margin-top:18px}.stats b{font:normal 1.6rem Georgia,serif;color:#f4d5a8}.stats span{display:block;color:#c1ac98;font-size:.8rem;margin-top:4px}.status{min-height:1.4em;text-align:center;color:#e1c7a5;font-size:.84rem;margin-top:12px}footer{text-align:center;color:#a99683;font-size:.8rem;margin-top:38px}@media(max-width:540px){.shell{padding:18px 14px 50px}.hero{margin-top:38px}.card{padding:20px 16px}.fields{grid-template-columns:1fr}.beads{grid-template-columns:repeat(12,1fr)}}
+
+:root{color-scheme:dark;--bg:#181513;--text:#f1e3d2;--soft:#bdab99;--gold:#dcb786;--line:#534438;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse 64% 35% at 50% 22%,#36291f 0%,#211b17 46%,#181513 100%)}
+.shell{max-width:820px;margin:0 auto;padding:25px 28px 74px}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-bottom:18px;border-bottom:1px solid #40352e}
+.logo{font:500 1.35rem Georgia,'Times New Roman',serif;letter-spacing:.012em;color:#f4d4a8}
+.small{font-size:.75rem;color:#ab9380;letter-spacing:.09em}
+.intro{text-align:center;padding:34px 0 0}
+.intro h1{font:400 clamp(1.1rem,2.8vw,1.45rem) Georgia,serif;letter-spacing:.06em;color:#e5c8a1;margin:0}
+.intro p{margin:9px 0 0;color:#a99888;font-size:.79rem;letter-spacing:.1em}
+.practice{position:relative;text-align:center;padding:0 0 25px}
+.orbital-stage{width:min(74vw,370px);height:min(74vw,370px);position:relative;margin:13px auto 0;isolation:isolate}
+.orbital-stage:before{content:'';position:absolute;inset:21%;border-radius:50%;background:radial-gradient(circle,#a76e3f20,transparent 72%);filter:blur(20px);z-index:-1}
+.orbit{width:100%;height:100%;position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.orbit circle{fill:none;stroke:#a782602f;stroke-width:.8}
+.orbit text{font-family:Georgia,'Noto Serif Devanagari','Nirmala UI',serif;fill:#ae8969;font-size:15px;letter-spacing:2px}
+.infinity-svg{width:61%;height:40%;position:absolute;left:19.5%;top:30%}
+.infinity-base{fill:none;stroke:#dcb786;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 7px #e4aa5b24)}
+.infinity-trace{fill:none;stroke:#fff0cb;stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:76 650;stroke-dashoffset:0;opacity:.45;filter:drop-shadow(0 0 6px #eac48b88)}
+.is-playing .orbit{animation:orbit 42s linear infinite}
+.is-playing .infinity-trace{animation:trace 4.5s linear infinite;opacity:1}
+.is-playing .infinity-base{animation:breathe 4.5s ease-in-out infinite}
+@keyframes orbit{to{transform:rotate(360deg)}}
+@keyframes trace{to{stroke-dashoffset:-726}}
+@keyframes breathe{0%,100%{opacity:.65}50%{opacity:1}}
+.mantra{font:400 clamp(1.85rem,5vw,2.65rem) Georgia,'Noto Serif Devanagari','Nirmala UI',serif;color:#f4dfbf;line-height:1.4;margin:-4px 0 1px}
+.translit{font-size:.8rem;color:#af9682;letter-spacing:.16em}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#594739,transparent);margin:27px auto 19px;max-width:480px}
+.eyebrow{text-transform:uppercase;letter-spacing:.2em;color:#a99278;font-size:.67rem;font-weight:600}
+.count{font:400 clamp(4rem,13vw,6rem) Georgia,serif;color:#f2e2ce;line-height:1.2;margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.count-sub{font-size:.85rem;color:#a99682}
+.bar{height:3px;border-radius:12px;background:#514135;overflow:hidden;max-width:420px;margin:19px auto}
+.bar-fill{height:100%;background:#e4bc84;width:0;transition:width .2s}
+.beads{display:grid;grid-template-columns:repeat(36,1fr);gap:5px;max-width:430px;margin:22px auto 10px}
+.bead{width:100%;aspect-ratio:1;border-radius:50%;border:1px solid #625040;background:#332b25}
+.bead.active{background:#deb27a;border-color:#deb27a;box-shadow:0 0 5px #edbc7080}
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:28px 0 8px}
+button,select,input{font:inherit}
+button{border:1px solid #5c4a3d;border-radius:100px;background:transparent;color:#e9d6bf;padding:12px 18px;cursor:pointer;transition:background .2s,color .2s}
+button:hover{background:#352a23}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #eac28b;outline-offset:3px}
+.primary{background:#e4bc84;border-color:#e4bc84;color:#2c2017;font-weight:600;min-width:150px}
+.primary:hover{background:#f0ce9d}
+.ghost{border-color:transparent;color:#a6927f}
+.status{min-height:1.5em;text-align:center;color:#bc9d7e;font-size:.78rem;margin-top:16px;line-height:1.6}
+.card{border-top:1px solid #493a30;padding:32px 8px;margin-top:22px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{display:block;color:#c9b09a;font-size:.82rem;margin-bottom:8px}
+select,input[type=number],input[type=text]{width:100%;background:#211c18;border:1px solid #5a483a;border-radius:8px;padding:11px 12px;color:#f5e7d7;min-width:0}
+input[type=file]{max-width:100%;color:#ac9782;font-size:.8rem}
+input[type=file]::file-selector-button{background:#3b3028;border:1px solid #68513e;border-radius:7px;padding:9px 13px;color:#f3d8b4;margin-right:12px;cursor:pointer}
+.note{color:#9f8c79;font-size:.8rem;line-height:1.7;margin:12px 0 0}
+.stats{display:flex;justify-content:space-between;text-align:center;gap:14px;margin-top:28px;border-top:1px solid #45382f;padding-top:25px}
+.stats b{font:400 1.55rem Georgia,serif;color:#ead3b5}
+.stats span{display:block;color:#a68f78;font-size:.75rem;margin-top:5px}
+footer{text-align:center;color:#806e5f;font-size:.75rem;margin-top:40px;letter-spacing:.07em}
+@media(max-width:560px){.shell{padding:19px 17px 42px}.small{font-size:.65rem}.intro{padding-top:29px}.orbital-stage{width:min(88vw,345px);height:min(88vw,345px);margin-top:6px}.controls{gap:8px}.controls button{padding:11px 15px}.fields{grid-template-columns:1fr}.beads{grid-template-columns:repeat(27,1fr)}.card{padding:28px 0}}
+@media(prefers-reduced-motion:reduce){.is-playing .orbit,.is-playing .infinity-trace,.is-playing .infinity-base{animation:none!important}.bar-fill,button{transition:none}}
+
 </style></head>
-<body><div class="shell"><header><div class="logo">✺ JapMala</div><span class="small">जपमाला · Your digital mala</span></header>
-<section class="hero"><div class="lotus" aria-hidden="true">🪷</div><h1>Every mantra. Every jap.</h1><p>A quiet space for your daily sadhana</p></section>
-<main><section class="card"><div class="eyebrow" style="text-align:center">Your current mantra</div><div id="mantraText" class="mantra">सीता राम</div><div id="romanText" class="translit">Sita Ram</div>
-<div class="count" id="count" aria-live="polite">0</div><div class="count-sub"><span id="targetLabel">0 / 108</span> repetitions · <span id="malaLabel">0 full malas</span></div><div class="bar" role="progressbar" aria-label="Progress toward target" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0" id="progress"><div id="barFill" class="bar-fill"></div></div><div class="beads" id="beads" aria-label="108 bead mala"></div>
-<div class="controls"><button id="playBtn" class="primary" type="button">▶ Play loop</button><button id="tapBtn" type="button">+1 Jap</button><button id="undoBtn" type="button">↶ Undo</button><button id="resetBtn" class="ghost" type="button">Reset</button></div><div class="status" id="status" aria-live="polite">Choose an audio clip containing one complete mantra per playback for automatic counting.</div>
-</section><section class="card"><div class="eyebrow">Your practice</div><div class="fields" style="margin-top:18px"><div><label for="mantraSelect">Choose mantra</label><select id="mantraSelect"><option value="sita">Sita Ram</option><option value="shiv">Om Namah Shivaya</option><option value="ram">Shri Ram Jai Ram</option><option value="gayatri">Gayatri Mantra</option><option value="swami">Swaminarayan</option><option value="custom">Custom mantra</option></select></div><div><label for="targetSelect">Jap target</label><select id="targetSelect"><option>11</option><option>21</option><option>51</option><option selected>108</option><option>1008</option><option value="custom">Custom number</option></select></div><div id="customMantraBox" hidden><label for="customMantra">Your mantra text</label><input id="customMantra" type="text" placeholder="Enter mantra" maxlength="100"></div><div id="customTargetBox" hidden><label for="customTarget">Repetitions target</label><input id="customTarget" type="number" min="1" max="1000000" value="108"></div><div style="grid-column:1/-1"><label for="audioFile">Upload your own one-repetition audio (MP3, WAV, OGG, etc.)</label><input type="file" id="audioFile" accept="audio/*"><p class="note">Audio stays on your device; it is not uploaded to any server. Browsers require a tap to start sound. Uploaded files must be selected again after a page reload.</p></div></div><div class="stats"><div><b id="sessionCount">0</b><span>Current session</span></div><div><b id="totalCount">0</b><span>All-time jap</span></div><div><b id="remaining">108</b><span>To target</span></div></div></section>
+<body><div class="shell">
+<header><div class="logo">∞ JapMala</div><span class="small">जपमाला · a mindful practice</span></header>
+<main>
+<section class="intro"><h1>Every mantra. Every jap.</h1><p>BEGIN WITH STILLNESS</p></section>
+<section class="practice" aria-label="Mantra chanting and count">
+<div class="orbital-stage" id="motionStage" aria-hidden="true">
+<svg class="orbit" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<defs><path id="circularMantraPath" d="M 200,200 m -152,0 a 152,152 0 1,1 304,0 a 152,152 0 1,1 -304,0"/></defs>
+<circle cx="200" cy="200" r="172"/>
+<text><textPath id="ringText" href="#circularMantraPath">सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम</textPath></text>
+</svg>
+<svg class="infinity-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><path class="infinity-base" d="M 200 100 C 170 60 145 44 113 44 C 74 44 56 72 56 100 C 56 128 74 156 113 156 C 145 156 170 140 200 100 C 230 60 255 44 287 44 C 326 44 344 72 344 100 C 344 128 326 156 287 156 C 255 156 230 140 200 100"/><path class="infinity-trace" d="M 200 100 C 170 60 145 44 113 44 C 74 44 56 72 56 100 C 56 128 74 156 113 156 C 145 156 170 140 200 100 C 230 60 255 44 287 44 C 326 44 344 72 344 100 C 344 128 326 156 287 156 C 255 156 230 140 200 100"/></svg>
+</div>
+<h2 id="mantraText" class="mantra">सीता राम</h2><div id="romanText" class="translit">SITA RAM</div>
+<div class="divider" aria-hidden="true"></div>
+<div class="eyebrow">Repetitions</div><div class="count" id="count" aria-live="polite">0</div>
+<div class="count-sub"><span id="targetLabel">0 / 108</span> repetitions · <span id="malaLabel">0 full malas</span></div>
+<div class="bar" role="progressbar" aria-label="Progress toward target" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0" id="progress"><div id="barFill" class="bar-fill"></div></div>
+<div class="beads" id="beads" aria-label="108 bead mala"></div>
+<div class="controls"><button id="playBtn" class="primary" type="button">▶ Play loop</button><button id="tapBtn" type="button">+1 Jap</button><button id="undoBtn" type="button">↶ Undo</button><button id="resetBtn" class="ghost" type="button">Reset</button></div>
+<div class="status" id="status" aria-live="polite">Choose a one-repetition audio clip to play and count automatically.</div>
+</section>
+<section class="card"><div class="eyebrow">Your practice</div><div class="fields" style="margin-top:18px"><div><label for="mantraSelect">Choose mantra</label><select id="mantraSelect"><option value="sita">Sita Ram</option><option value="shiv">Om Namah Shivaya</option><option value="ram">Shri Ram Jai Ram</option><option value="gayatri">Gayatri Mantra</option><option value="swami">Swaminarayan</option><option value="custom">Custom mantra</option></select></div><div><label for="targetSelect">Jap target</label><select id="targetSelect"><option>11</option><option>21</option><option>51</option><option selected>108</option><option>1008</option><option value="custom">Custom number</option></select></div><div id="customMantraBox" hidden><label for="customMantra">Your mantra text</label><input id="customMantra" type="text" placeholder="Enter mantra" maxlength="100"></div><div id="customTargetBox" hidden><label for="customTarget">Repetitions target</label><input id="customTarget" type="number" min="1" max="1000000" value="108"></div><div style="grid-column:1/-1"><label for="audioFile">Upload your own one-repetition audio (MP3, WAV, OGG, etc.)</label><input type="file" id="audioFile" accept="audio/*"><p class="note">Audio stays on your device; it is not uploaded to any server. Browsers require a tap to start sound. Uploaded files must be selected again after a page reload.</p></div></div><div class="stats"><div><b id="sessionCount">0</b><span>Current session</span></div><div><b id="totalCount">0</b><span>All-time jap</span></div><div><b id="remaining">108</b><span>To target</span></div></div></section>
 <section class="card"><div class="eyebrow">How counting works</div><p class="note">Automatic mode adds exactly one Jap whenever the audio file finishes playing. For accurate automatic counts, your clip must contain exactly one complete mantra recitation. Use the +1 Jap button when chanting yourself or playing a song containing several repetitions. If playback is interrupted, an incomplete repetition is not counted. Counts are stored locally in this browser.</p></section></main><footer>JapMala · Made for peaceful, intentional chanting</footer></div>
 <script>
 (()=>{'use strict';
@@ -21,12 +98,12 @@ let audio=new Audio();audio.preload='auto';audio.loop=false;let playing=false;
 const getCount=()=>Math.max(0,Number(records[mantra])||0);
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({mantra,target,records,customText:$('customMantra').value}))}catch{setStatus('Storage unavailable; progress may not persist.')}};
 const setStatus=s=>$('status').textContent=s;
-const displayMantra=()=>{const txt=mantra==='custom'?($('customMantra').value.trim()||'Your mantra'):MANTRAS[mantra][0];$('mantraText').textContent=txt;$('romanText').textContent=mantra==='custom'?'Custom mantra':MANTRAS[mantra][1]};
+const displayMantra=()=>{const txt=mantra==='custom'?($('customMantra').value.trim()||'Your mantra'):MANTRAS[mantra][0];$('mantraText').textContent=txt;$('romanText').textContent=mantra==='custom'?'CUSTOM MANTRA':MANTRAS[mantra][1].toUpperCase();$('ringText').textContent=Array(20).fill(txt).join(' · ')};
 const render=()=>{let n=getCount(),current=n%108;displayMantra();$('count').textContent=n.toLocaleString();$('targetLabel').textContent=n.toLocaleString()+' / '+target.toLocaleString();$('malaLabel').textContent=Math.floor(n/108)+' full malas';$('remaining').textContent=Math.max(0,target-n).toLocaleString();$('sessionCount').textContent=session;$('totalCount').textContent=Object.values(records).reduce((s,v)=>s+(Math.max(0,Number(v)||0)),0).toLocaleString();$('barFill').style.width=Math.min(100,n/target*100)+'%';$('progress').setAttribute('aria-valuemax',target);$('progress').setAttribute('aria-valuenow',Math.min(n,target));$('beads').innerHTML='';for(let i=0;i<108;i++){let bead=document.createElement('span');bead.className='bead'+(i<current?' active':'');$('beads').appendChild(bead)}};
 const add=()=>{records[mantra]=getCount()+1;session++;save();render();if(getCount()===target)setStatus('🙏 Your target is complete. Jai Shri Ram!')};
-const stop=()=>{audio.pause();audio.currentTime=0;playing=false;$('playBtn').textContent='▶ Play loop'};
+const stop=()=>{audio.pause();audio.currentTime=0;playing=false;$('motionStage').classList.remove('is-playing');$('playBtn').textContent='▶ Play loop'};
 const loadAudio=()=>{stop();if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=null}audio.removeAttribute('src');audio.load();setStatus('Select a one-repetition audio file to enable automatic counting.')};
-$('playBtn').addEventListener('click',async()=>{if(playing){stop();setStatus('Paused.');return}if(!audio.src){setStatus('Choose an audio file first, or use +1 Jap while chanting manually.');return}try{await audio.play();playing=true;$('playBtn').textContent='❚❚ Pause';setStatus('Playing · one Jap added after each complete playback')}catch{setStatus('Audio playback was blocked or the file could not be played.')}});
+$('playBtn').addEventListener('click',async()=>{if(playing){stop();setStatus('Paused.');return}if(!audio.src){setStatus('Choose an audio file first, or use +1 Jap while chanting manually.');return}try{await audio.play();playing=true;$('motionStage').classList.add('is-playing');$('playBtn').textContent='❚❚ Pause';setStatus('Playing · one Jap added after each complete playback')}catch{setStatus('Audio playback was blocked or the file could not be played.')}});
 audio.addEventListener('ended',async()=>{if(!playing)return;add();try{audio.currentTime=0;await audio.play()}catch{stop();setStatus('Playback stopped. Tap Play to resume.')}});
 audio.addEventListener('error',()=>{stop();setStatus('This audio file could not be played. Try MP3 or WAV.')});
 $('tapBtn').addEventListener('click',()=>{add();if(getCount()!==target)setStatus('Jap counted manually.');});
