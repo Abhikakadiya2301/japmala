@@ -4,250 +4,232 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#1a1512">
-<meta name="description" content="JapMala — listen to Sita Ram and count each jap in sync with the chant.">
-<title>JapMala — Sita Ram</title>
+<meta name="description" content="JapMala is a serene, audio-only Sita Ram chanting experience with a glowing infinity counter and one count per completed recitation.">
+<title>JapMala — Sita Ram Jap</title>
 <style>
- 
-:root{color-scheme:dark;--bg:#1a1512;--fg:#f3e8d9;--muted:#ac9581;--gold:#efc58e;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-*{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;min-height:100dvh;background:radial-gradient(ellipse 80% 60% at 50% 22%,#34281e 0%,#211a16 55%,#1a1512 100%)}
-.wrap{width:min(100%,1120px);min-height:100dvh;height:100dvh;margin:0 auto;padding:clamp(12px,2.2vh,22px) clamp(14px,2vw,28px);display:flex;flex-direction:column;overflow:hidden}
-header{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #514033;padding-bottom:clamp(9px,1.5vh,16px)}
-.brand{font:500 clamp(1.1rem,2vw,1.38rem) Georgia,serif;color:#f0ce9f}
-.header-right{display:flex;align-items:center;gap:15px}.subbrand{font-size:.69rem;color:#af9681;letter-spacing:.07em}
-.dashboard{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1.07fr) minmax(0,.93fr);align-items:center;gap:clamp(14px,3vw,42px)}
-.focus{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0;min-width:0;text-align:center}
-.intro h1{margin:0;color:#e8cfad;font:400 clamp(1rem,2vw,1.28rem) Georgia,serif}
-.intro p{margin:3px 0 0;color:#a98a6a;font-size:.65rem;letter-spacing:.18em}
-.stage{position:relative;isolation:isolate;flex-shrink:1;aspect-ratio:1;width:min(100%,51dvh,475px);margin:0 auto}
-.stage:before{content:"";position:absolute;inset:23%;background:#c68a3b20;border-radius:50%;filter:blur(28px);z-index:-1}
-.ring{width:100%;height:100%;position:absolute;inset:0}.ring circle{fill:none;stroke:#bd976348;stroke-width:.85}
-.ring text{fill:#cba47d;font-size:13px;font-family:Georgia,"Nirmala UI",serif;letter-spacing:1.3px}
-.playing .ring{animation:rotate 38s linear infinite}@keyframes rotate{to{transform:rotate(360deg)}}
-.infinity{position:absolute;left:5%;top:25%;width:90%;height:50%;overflow:visible}
-.infinity-path{fill:none;stroke:#f2d2a4;stroke-width:8;stroke-linecap:round;filter:drop-shadow(0 0 7px #ffd49cbb) drop-shadow(0 0 18px #d6984970)}
-.infinity-glow{fill:none;stroke:#fff9ed;stroke-width:8;stroke-linecap:round;stroke-dasharray:80 920;stroke-dashoffset:0;opacity:.55;filter:drop-shadow(0 0 9px #f5d1a1)}
-.playing .infinity-glow{animation:trace 4.4s linear infinite;opacity:1}.playing .infinity-path{animation:pulse 4s ease-in-out infinite}
-@keyframes trace{to{stroke-dashoffset:-1000}}@keyframes pulse{50%{filter:drop-shadow(0 0 14px #ffdda9) drop-shadow(0 0 27px #e6a253b0)}}
-.number{position:absolute;top:50%;transform:translate(-50%,-50%);width:27%;text-align:center;pointer-events:none}
-.number.done{left:25.5%}.number.goal{left:74.5%}
-.number strong{display:block;color:#fff4df;font:400 clamp(1.15rem,3.7vw,2.6rem)/1.1 Georgia,serif;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.number span{display:block;color:#e1ba8b;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(.49rem,1.1vw,.68rem);margin-top:5px}
-.particle{position:absolute;left:50%;top:50%;font:400 15px Georgia,"Nirmala UI",serif;color:#eac69a;white-space:nowrap;pointer-events:none;opacity:0;--deg:0deg;--delay:0s}
-.playing .particle{animation:particle-out 6.5s ease-out var(--delay) infinite}
-@keyframes particle-out{0%{opacity:0;transform:rotate(var(--deg)) translateY(-42px) rotate(calc(-1 * var(--deg))) scale(.7)}18%{opacity:.7}60%{opacity:.38}100%{opacity:0;transform:rotate(calc(var(--deg) + 36deg)) translateY(-165px) rotate(calc(-1 * (var(--deg) + 36deg))) scale(1.14)}}
-.mantra{font:400 clamp(1.65rem,3.5vw,2.45rem)/1.25 Georgia,"Nirmala UI",serif;color:#f7e0bc;margin:-3px 0 0}
-.roman{color:#b59a80;font-size:.68rem;letter-spacing:.19em;margin-top:2px}
-.summary{color:#bfa58b;font-size:.77rem;margin-top:clamp(4px,1vh,12px)}.progress{width:min(100%,345px);height:3px;background:#4d3b2b;border-radius:6px;overflow:hidden;margin:9px 0 3px}
-.fill{height:100%;width:0;background:#efc58e;transition:width .2s}
-.beads{width:min(100%,345px);display:grid;grid-template-columns:repeat(36,1fr);gap:3px;margin:8px auto 0}
-.bead{aspect-ratio:1;border-radius:50%;background:#392d25;border:1px solid #654d38}.bead.active{background:#f0c38c;border-color:#f0c38c}
-.utility{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:12px}
-.video-label{display:flex;align-items:center;justify-content:space-between;color:#c9ab8b;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
-.video-container{width:100%;aspect-ratio:16/9;min-height:200px;background:#120f0d;border:1px solid #604b38;border-radius:12px;overflow:hidden}
-.video-container iframe{display:block;width:100%;height:100%;border:0}
-.buttons{display:grid;grid-template-columns:1.2fr 1.2fr .75fr;gap:8px;margin:0}
-button,select,input{font:inherit}
-button{background:transparent;border:1px solid #715842;border-radius:9px;padding:10px 9px;color:#f0d8b8;cursor:pointer;min-height:40px}
-button:hover{background:#3c2d21}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #efc58e;outline-offset:3px}button:disabled{opacity:.4;cursor:not-allowed}
-.primary{background:#efc58e;border-color:#efc58e;color:#2b2017;font-weight:650}.primary:hover{background:#ffdbab}
-.tertiary{border:1px solid #725642;color:#edd3b2}.settings-button{border:1px solid #5c4837;border-radius:50%;width:35px;height:35px;min-height:35px;padding:0;color:#e6c398;font-size:1.15rem;display:grid;place-items:center}
-.status{font-size:.74rem;color:#c8aa89;text-align:center;line-height:1.4;min-height:2.1em;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.player-link{color:#a88f7a;font-size:.72rem;text-align:center;text-decoration:none}.player-link:hover{text-decoration:underline}
-dialog.settings{color:var(--fg);background:#241c17;border:1px solid #826446;border-radius:18px;width:min(94vw,580px);max-height:85dvh;padding:0;box-shadow:0 28px 80px #000a;overflow:auto}
-dialog.settings::backdrop{background:#0e0908c9;backdrop-filter:blur(5px)}
-.modal-inner{padding:clamp(18px,3vw,28px)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.modal-head h2{margin:0;font:400 1.4rem Georgia,serif;color:#eac999}.close{font-size:1.35rem;border-color:transparent;border-radius:50%;min-height:36px;width:36px;padding:0}
-.section-label{color:#cba47c;text-transform:uppercase;letter-spacing:.12em;font-size:.69rem;font-weight:700;margin:14px 0 11px}
-.inputs{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;color:#ccb298;font-size:.81rem;margin-bottom:7px}
-select,input[type=number]{width:100%;background:#30251e;border:1px solid #715640;border-radius:8px;color:#f2e0c9;padding:10px}
-.note{color:#ad957e;font-size:.78rem;line-height:1.6;margin:10px 0}
-.cal-btns{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}.cal-btns button{min-height:38px}
-.metrics{display:flex;justify-content:space-around;text-align:center;gap:15px;padding:12px 0}.metrics strong{display:block;font:400 1.6rem Georgia,serif;color:#e9d1ae}.metrics span{display:block;color:#aa927e;font-size:.7rem}
-.hint{border-top:1px solid #584436;margin-top:14px;padding-top:12px}
-@media(max-width:740px){
-.wrap{padding:9px 13px 11px}
-header{padding-bottom:7px}.brand{font-size:1.18rem}.subbrand{font-size:.6rem}
-.dashboard{display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;gap:0}
-.focus{flex:1 1 auto;justify-content:center}
-.intro h1{font-size:1rem}.intro p{display:none}
-.stage{height:min(31dvh,270px);width:min(31dvh,270px);flex:0 0 auto}
-.number strong{font-size:clamp(1.2rem,5.7vw,1.9rem)}.number span{font-size:.48rem;letter-spacing:.02em}
-.mantra{font-size:clamp(1.4rem,5vw,1.8rem)}.roman{font-size:.62rem}
-.summary{margin-top:3px;font-size:.7rem}
-.progress{margin:5px 0 0}
-.beads{max-width:280px;gap:2px;margin-top:5px}
-.utility{flex:0 0 auto;gap:7px}
-.video-label{display:none}
-.video-container{height:clamp(200px,29dvh,232px);min-height:200px;aspect-ratio:auto;border-radius:8px}
-.buttons{gap:7px}
-.buttons button{padding:7px 5px;font-size:.81rem;min-height:37px}
-.status{font-size:.68rem;min-height:1.4em;max-height:2.8em}
-.player-link{display:none}
-}
-@media(max-width:740px) and (max-height:690px){
-.stage{height:min(26dvh,180px);width:min(26dvh,180px)}
-.beads{display:none}
-.summary{font-size:.65rem}
-.intro h1{font-size:.92rem}
-.utility{gap:5px}
-.status{-webkit-line-clamp:1;min-height:1.2em}
-}
-@media(max-width:740px) and (max-height:545px){
-.wrap{height:auto;min-height:100dvh;overflow:visible}
-.dashboard{gap:5px}.stage{height:140px;width:140px}
-}
-@media(max-height:530px) and (min-width:741px){.stage{width:min(36dvh,260px)}.intro p,.beads{display:none}.utility{gap:7px}}
-@media(prefers-reduced-motion:reduce){.playing .ring,.playing .infinity-glow,.playing .infinity-path,.playing .particle{animation:none!important}.fill{transition:none}}
-
-
-/* Centered, one-screen devotional layout. Keep the YouTube iframe clearly visible. */
-.wrap{max-width:720px}
-.dashboard{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:clamp(4px,1vh,12px)}
-.focus{width:100%;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.intro{margin-top:0}
-.stage{position:relative;flex:0 1 auto;width:min(100%,34dvh,330px);height:auto;aspect-ratio:1;margin:0 auto}
-.number strong{font-size:clamp(1.3rem,4vw,2.35rem)}
-.mantra{font-size:clamp(1.45rem,3.5vw,2.05rem);margin:-3px 0 0}
-.summary{margin-top:2px;font-size:.72rem}
-.progress{margin:7px auto 1px}
-.beads{max-width:315px;margin-top:6px;gap:3px}
-.utility{width:min(100%,380px);flex:0 0 auto;gap:7px;align-items:stretch;justify-content:center}
-.video-container{height:clamp(200px,25dvh,214px);min-height:200px;aspect-ratio:auto;border-radius:9px}
-.buttons{margin:0;gap:8px}
-.buttons button{min-height:38px;padding:8px 7px;font-size:.83rem}
-.video-label{justify-content:center;letter-spacing:.11em;font-size:.67rem}
-.video-label span:last-child{display:none}
-.status{min-height:1.1em;font-size:.72rem;-webkit-line-clamp:2}
-.player-link{font-size:.67rem}
-@media(max-height:900px){.stage{width:min(100%,31dvh,290px)}}
-@media(max-height:740px){.stage{width:min(100%,29dvh,248px)}.beads{display:none}.video-label{display:none}.utility{gap:5px}.summary{font-size:.69rem}}
-@media(max-height:600px){.stage{width:min(100%,25dvh,192px)}.intro p{display:none}.roman{font-size:.59rem}.video-container{height:200px}.player-link{display:none}}
-@media(max-width:740px){
-.wrap{height:100dvh;min-height:100dvh;padding:9px 13px 11px;overflow:hidden}
-.dashboard{display:flex;flex-direction:column;justify-content:space-between;gap:4px;align-items:center}
-.focus{flex:1 1 auto;justify-content:center}
-.stage{width:min(100%,30dvh,265px);height:auto;aspect-ratio:1}
-.number strong{font-size:clamp(1.1rem,5.6vw,1.85rem)}
-.mantra{font-size:clamp(1.4rem,5.1vw,1.9rem)}
-.summary{margin-top:2px}
-.utility{width:min(100%,380px);gap:6px;flex:0 0 auto}
-.video-label{display:none}
-.video-container{width:100%;height:200px;min-height:200px;aspect-ratio:auto}
-.buttons{display:grid;grid-template-columns:1.2fr 1.2fr .75fr}
-.status{-webkit-line-clamp:2;min-height:1.2em}
-}
-@media(max-width:740px) and (max-height:690px){.stage{width:min(100%,26dvh,205px)}.beads{display:none}}
-@media(max-width:740px) and (max-height:545px){.wrap{height:auto;min-height:100dvh;overflow:visible}.dashboard{gap:7px}.stage{width:140px}.player-link{display:none}}
-
-</style></head>
-<body><div class="wrap">
-<header><div class="brand">∞ JapMala</div><div class="header-right"><span class="subbrand">सीता राम · SITA RAM</span><button class="settings-button" id="openSettings" type="button" aria-label="Open counting settings" title="Counting settings">⚙</button></div></header>
-<main class="dashboard">
-<section class="focus" aria-label="Sita Ram repetition counter">
-<div class="intro"><h1>Every mantra. Every jap.</h1><p>INFINITE DEVOTION</p></div>
-<div class="stage" id="stage" aria-hidden="true">
-<svg class="ring" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg"><defs><path id="ringPath" d="M 220,220 m -165,0 a165,165 0 1,1 330,0 a165,165 0 1,1 -330,0"/></defs><circle cx="220" cy="220" r="188"/><text><textPath href="#ringPath">सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम ·</textPath></text></svg>
-<div id="particles"></div>
-<svg class="infinity" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><path class="infinity-path" d="M 200 100 C 169 59 145 43 108 43 C 67 43 47 70 47 100 C 47 130 67 157 108 157 C 145 157 169 141 200 100 C 231 59 255 43 292 43 C 333 43 353 70 353 100 C 353 130 333 157 292 157 C 255 157 231 141 200 100"/><path class="infinity-glow" pathLength="1000" d="M 200 100 C 169 59 145 43 108 43 C 67 43 47 70 47 100 C 47 130 67 157 108 157 C 145 157 169 141 200 100 C 231 59 255 43 292 43 C 333 43 353 70 353 100 C 353 130 333 157 292 157 C 255 157 231 141 200 100"/></svg>
-<div class="number done"><strong id="count">0</strong></div><div class="number goal"><strong id="goal">108</strong></div>
+:root{color-scheme:dark;--bg:#1a1512;--ink:#f2e5d6;--gold:#f0c38a;--muted:#b09b86;font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100dvh;background:radial-gradient(ellipse 68% 47% at 50% 38%,#3b2a1e 0%,#241b16 52%,#1a1512 100%)}
+.page{width:min(100%,850px);min-height:100dvh;margin:auto;padding:clamp(12px,2.5vh,24px) clamp(16px,3vw,30px);display:flex;flex-direction:column;align-items:center}
+header{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;border-bottom:1px solid #4c3b2d;padding-bottom:12px;flex-shrink:0}
+.brand{font:500 clamp(1.22rem,3vw,1.52rem) Georgia,serif;color:#f6d6a6}
+.header-right{display:flex;gap:14px;align-items:center}
+.header-note{color:#ac9074;font-size:.7rem;letter-spacing:.09em}
+button{font:inherit;cursor:pointer;background:#2c221b;color:#f3d7b8;border:1px solid #74563e;border-radius:100px;padding:11px 17px;touch-action:manipulation}
+button:hover{background:#3e2e22}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #f0c38a;outline-offset:3px}
+button:disabled{cursor:not-allowed;opacity:.48}
+.settings-toggle{border:1px solid #67503b;width:38px;height:38px;display:grid;place-items:center;padding:0;font-size:1.2rem}
+main{width:100%;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px,1.1vh,12px)}
+.eyebrow{color:#d3af86;letter-spacing:.19em;text-transform:uppercase;font-size:.68rem;text-align:center}
+h1{font:400 clamp(1.95rem,5vw,2.65rem)/1.28 Georgia,"Nirmala UI","Noto Serif Devanagari",serif;color:#f5d8ae;text-align:center;margin:0}
+.subtitle{color:#b79b7e;font-size:.74rem;letter-spacing:.13em;text-align:center}
+.orbital{width:min(95%,50dvh,450px);max-height:50dvh;aspect-ratio:1;position:relative;isolation:isolate;flex-shrink:1}
+.orbital:before{content:"";position:absolute;inset:22%;background:#d7924130;filter:blur(34px);border-radius:50%;z-index:-1}
+.outer-svg{width:100%;height:100%;position:absolute;inset:0;transform-origin:center}
+.outer-svg circle{stroke:#bd915e46;stroke-width:1;fill:none}
+.outer-svg text{font:400 14px Georgia,"Nirmala UI",serif;fill:#c49d73;letter-spacing:2px}
+.is-playing .outer-svg{animation:turn 45s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+.inf-svg{position:absolute;left:6%;top:27%;width:88%;height:46%;overflow:visible}
+.inf-base,.inf-light{fill:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+.inf-base{stroke:#f0c38a;filter:drop-shadow(0 0 8px #ffd69ec7) drop-shadow(0 0 18px #db913f80)}
+.inf-light{stroke:#fff7de;stroke-dasharray:78 922;stroke-dashoffset:0;opacity:.5;filter:drop-shadow(0 0 8px #fff0b1)}
+.is-playing .inf-light{animation:trace 4.7s linear infinite;opacity:1}
+.is-playing .inf-base{animation:pulse 4.7s ease-in-out infinite}
+@keyframes trace{to{stroke-dashoffset:-1000}}
+@keyframes pulse{50%{filter:drop-shadow(0 0 13px #ffe5a8) drop-shadow(0 0 28px #f4b562b0)}}
+.digit{position:absolute;top:50%;transform:translate(-50%,-50%);width:27%;text-align:center;color:#fff6e6;font:400 clamp(1.45rem,5vw,2.7rem)/1.1 Georgia,serif;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.digit.left{left:25.5%}.digit.right{left:74.5%}
+.letter{position:absolute;left:50%;top:50%;opacity:0;font:400 17px Georgia,"Nirmala UI",serif;color:#eac697;white-space:nowrap;pointer-events:none;--rot:0deg;--delay:0s}
+.is-playing .letter{animation:drift 6.5s ease-out var(--delay) infinite}
+@keyframes drift{0%{opacity:0;transform:rotate(var(--rot)) translateY(-28px) rotate(calc(-1 * var(--rot))) scale(.7)}22%{opacity:.64}70%{opacity:.26}100%{opacity:0;transform:rotate(calc(var(--rot) + 25deg)) translateY(-185px) rotate(calc(-1 * (var(--rot) + 25deg))) scale(1.1)}}
+.bar{width:min(82%,355px);height:3px;border-radius:5px;background:#513e2c;overflow:hidden;margin-top:4px}
+.fill{width:0;height:100%;background:var(--gold);transition:width .2s}
+.progress-text{font-size:.76rem;color:#bea387;text-align:center}
+.controls{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:clamp(8px,1.6vh,20px)}
+.primary{min-width:160px;background:#efc58d;border-color:#efc58d;color:#342219;font-weight:650}
+.primary:hover{background:#ffdeb0}
+.secondary{background:transparent;color:#dfbd96}
+.status{color:#c1a385;font-size:.74rem;text-align:center;min-height:1.4em;line-height:1.5;max-width:590px;margin:6px 0 0}
+footer{color:#9c836a;font-size:.7rem;text-align:center;padding-top:7px;flex-shrink:0}
+dialog{border:1px solid #806047;border-radius:19px;box-shadow:0 22px 80px #000b;color:var(--ink);background:#261d17;width:min(94vw,550px);max-height:85dvh;padding:0;overflow:auto}
+dialog::backdrop{background:#0b0706c9;backdrop-filter:blur(4px)}
+.modal{padding:clamp(18px,3vw,30px)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal h2{font:400 1.5rem Georgia,serif;color:#efc58d;margin:0}
+.close{font-size:1.5rem;border:0;padding:0;min-width:36px;width:36px;height:36px}
+.field{margin-top:19px}.field label{display:block;font-size:.85rem;color:#dbc0a2;margin-bottom:7px}
+.field select,.field input[type=number],.field input[type=range]{width:100%}
+.field select,.field input[type=number]{padding:10px;color:#f8e7d1;border:1px solid #6f543e;background:#34271e;border-radius:9px;font:inherit}
+.field input[type=range]{accent-color:#efc58d}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.toggle-row{display:flex;align-items:center;gap:9px;color:#dbc0a2;font-size:.86rem}
+.check{accent-color:var(--gold);width:17px;height:17px}
+.modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin:20px 0}
+.note{color:#aa9178;font-size:.8rem;line-height:1.6}
+.metrics{display:flex;justify-content:space-around;gap:14px;text-align:center;border-top:1px solid #544032;padding:18px 0}
+.metrics strong{display:block;font:400 1.6rem Georgia,serif;color:#f3d7b1}
+.metrics span{font-size:.72rem;color:#ad9378}
+@media(max-height:680px){.orbital{width:min(87%,41dvh,310px);max-height:41dvh}.eyebrow{font-size:.62rem}.controls{margin-top:5px}.page{padding-top:9px;padding-bottom:10px}main{gap:4px}.status{font-size:.68rem}}
+@media(max-width:550px){.header-note{display:none}.orbital{width:min(100%,47dvh,355px);max-height:47dvh}.digit{font-size:clamp(1.35rem,5.8vw,2.15rem)}.controls button{padding:10px 13px}.primary{min-width:135px}h1{font-size:2rem}.pair{grid-template-columns:1fr}}
+@media(max-height:500px){.page{min-height:100dvh;height:auto;overflow:visible}.orbital{width:175px;height:175px;max-height:none}main{gap:3px}}
+@media(prefers-reduced-motion:reduce){.is-playing .outer-svg,.is-playing .inf-base,.is-playing .inf-light,.is-playing .letter{animation:none!important}.fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<header><div class="brand">∞ JapMala</div><div class="header-right"><span class="header-note">सीता राम · SITA RAM</span><button class="settings-toggle" id="settingsOpen" type="button" aria-label="Open settings" title="Settings">⚙</button></div></header>
+<main aria-label="Sita Ram jap practice">
+<div class="eyebrow">Infinite devotion</div>
+<h1>सीता राम</h1>
+<div class="subtitle">SITA RAM · EVERY JAP MATTERS</div>
+<div class="orbital" id="orbital" aria-hidden="true">
+<svg class="outer-svg" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg">
+<defs><path id="mantraCircle" d="M220,220 m-167,0 a167,167 0 1,1 334,0 a167,167 0 1,1 -334,0"/></defs>
+<circle cx="220" cy="220" r="190"/>
+<text><textPath href="#mantraCircle">सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम · सीता राम ·</textPath></text>
+</svg>
+<div id="letters"></div>
+<svg class="inf-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+<path class="inf-base" pathLength="1000" d="M200 100 C169 59 145 43 108 43 C67 43 47 70 47 100 C47 130 67 157 108 157 C145 157 169 141 200 100 C231 59 255 43 292 43 C333 43 353 70 353 100 C353 130 333 157 292 157 C255 157 231 141 200 100"/>
+<path class="inf-light" pathLength="1000" d="M200 100 C169 59 145 43 108 43 C67 43 47 70 47 100 C47 130 67 157 108 157 C145 157 169 141 200 100 C231 59 255 43 292 43 C333 43 353 70 353 100 C353 130 333 157 292 157 C255 157 231 141 200 100"/>
+</svg>
+<div class="digit left" id="count">0</div><div class="digit right" id="targetNumber">108</div>
 </div>
-<h1 class="mantra">सीता राम</h1><div class="roman">SITA RAM</div>
-<div class="summary"><span id="progressLabel">0 / 108 repetitions</span> · <span id="malas">0 completed malas</span></div>
-<div class="progress" id="progress" role="progressbar" aria-label="Progress towards jap target" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0"><div class="fill" id="fill"></div></div>
-<div class="beads" id="beads" aria-label="108-bead progress"></div>
-</section>
-<section class="utility" aria-label="Sita Ram playback">
-<div class="video-label"><span>Sita Ram · Original YouTube recording</span><span>YouTube</span></div>
-<div class="video-container" id="videoContainer"><div id="youtube-player"></div></div>
-<div class="buttons"><button id="play" class="primary" type="button">▶ Play</button><button id="mark" class="tertiary" type="button" title="Mark end of one full Sita Ram to synchronize">Mark jap</button><button id="plus" type="button" title="Add one jap manually">+1 jap</button></div>
-<p id="status" class="status" aria-live="polite">Loading the Sita Ram player…</p>
-<a class="player-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">Open original recording on YouTube</a>
-</section>
+<div class="progress-text"><span id="countCaption">0 of 108 completed</span> · <span id="malaCaption">0 malas</span></div>
+<div class="bar" id="progress" role="progressbar" aria-label="Jap target progress" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0"><div class="fill" id="fill"></div></div>
+<div class="controls"><button class="primary" id="play" type="button">▶ Play chant</button><button class="secondary" id="manual" type="button">+1 Jap</button><button class="secondary" id="undo" type="button">↶ Undo</button></div>
+<p class="status" id="status" role="status" aria-live="polite">Audio-only Sita Ram · browser-generated chant</p>
 </main>
-<dialog class="settings" id="settingsDialog" aria-labelledby="settingsTitle"><div class="modal-inner">
-<div class="modal-head"><h2 id="settingsTitle">Your jap practice</h2><button type="button" id="closeSettings" class="close" aria-label="Close settings">×</button></div>
-<div class="section-label">Repetition target</div>
-<div class="inputs">
-<div><label for="targetSelect">Target japs</label><select id="targetSelect"><option value="11">11</option><option value="21">21</option><option value="51">51</option><option value="108">108</option><option value="1008">1008</option><option value="custom">Custom goal</option></select></div>
-<div id="customBox" hidden><label for="customTarget">Custom goal</label><input id="customTarget" type="number" min="1" max="1000000" value="108"></div>
-<div><label for="syncMode">Auto-count method</label><select id="syncMode"><option value="rhythm">Automatic (estimated)</option><option value="exact">Exact time marks</option></select></div><div id="paceBox"><label for="paceSeconds">Estimated seconds per Jap</label><input id="paceSeconds" type="number" min="0.6" max="45" step="0.1" value="2.2"></div>
+<footer>Audio-only preview uses your device's speech voice, not the YouTube recording.</footer>
 </div>
-<p id="syncHint" class="note">Automatic counting starts when the song plays. Its initial rhythm is an estimate, not actual vocal recognition. Tap Mark jap at the end of two consecutive complete repetitions to synchronize it.</p>
-<div class="cal-btns"><button id="clearSync" type="button">Clear sync</button><button id="undo" type="button">↶ Undo jap</button><button id="reset" type="button">Reset count</button></div>
-<div class="section-label hint">Your progress</div>
-<div class="metrics"><div><strong id="session">0</strong><span>This visit</span></div><div><strong id="lifetime">0</strong><span>All time</span></div><div><strong id="remaining">108</strong><span>Remaining</span></div></div>
-<p class="note">Automatic counts are time-based approximations, not speech recognition. Music, introductions, and changes in chant pace may cause incorrect counts. For higher precision, mark two repetitions or use Exact time marks to save each completion once. Skipped parts of the video are not counted. Counts are saved in this browser.</p>
-<p class="note">YouTube controls the recording. Some browsers restrict its playback or embedding; the audio is not downloaded or redistributed.</p>
+<dialog id="settingsDialog" aria-labelledby="settingsHeading"><div class="modal">
+<div class="modal-head"><h2 id="settingsHeading">Jap settings</h2><button type="button" class="close" id="settingsClose" aria-label="Close settings">×</button></div>
+<div class="pair">
+<div class="field"><label for="goalSelect">Jap target</label><select id="goalSelect"><option>11</option><option>21</option><option>51</option><option>108</option><option>1008</option><option value="custom">Custom</option></select></div>
+<div class="field" id="customGoalWrap" hidden><label for="customGoal">Custom repetitions</label><input id="customGoal" type="number" value="108" min="1" max="1000000"></div>
+</div>
+<div class="field"><label for="pace">Chant speed · <span id="paceValue">0.90×</span></label><input type="range" id="pace" min="0.65" max="1.25" step="0.05" value="0.90"></div>
+<div class="field"><label class="toggle-row" for="ambient"><input class="check" type="checkbox" id="ambient" checked>Soft ambient background tone (original synthesized sound)</label></div>
+<div class="modal-actions"><button id="reset" type="button">Reset current jap</button></div>
+<div class="metrics"><div><strong id="session">0</strong><span>This session</span></div><div><strong id="lifetime">0</strong><span>All time</span></div><div><strong id="remaining">108</strong><span>Remaining</span></div></div>
+<p class="note">Jap increments after each completed spoken “Sita Ram” phrase, not after a guessed musical interval. Browser voices and background playback vary by device. Counters are stored locally on this device.</p>
+<p class="note">To use the exact YouTube musical recording without video, the project would need a separately authorized audio file. The YouTube soundtrack is not extracted or hosted here.</p>
 </div></dialog>
-</div>
 <script>
 (function(){
-'use strict';
-const VIDEO_ID='c3K1BWeIZyo', KEY='japmala-sita-ram-v2';
+"use strict";
 const $=id=>document.getElementById(id);
-let old={};try{old=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch{}
-let original={};try{original=JSON.parse(localStorage.getItem('japmala-v1')||'{}')||{}}catch{}
-let count=validCount(old.count)?old.count:(validCount(original.records&&original.records.sita)?original.records.sita:0);
-let lifetime=validCount(old.lifetime)?old.lifetime:count;
-let target=validTarget(old.target)?old.target:(validTarget(original.target)?original.target:108);
-let mode=old.mode==='exact'?'exact':'rhythm';
-let phase=old.phase&&Number.isFinite(old.phase.a)&&Number.isFinite(old.phase.b)&&old.phase.b>old.phase.a?{a:old.phase.a,b:old.phase.b}:null;
-const DEFAULT_SECONDS=2.2; // Provisional approximation; not measured from this recording.
-let paceSeconds=Number.isFinite(old.paceSeconds)&&old.paceSeconds>=.6&&old.paceSeconds<=45?old.paceSeconds:DEFAULT_SECONDS;
-const activePhase=()=>phase||{a:0,b:paceSeconds};
-let firstTap=null;
-let cues=Array.isArray(old.cues)?old.cues.filter(x=>Number.isFinite(x)&&x>=0).sort((a,b)=>a-b).slice(0,10000):[];
-let exactReady=!!old.exactReady&&cues.length>0;
-if(mode==='exact'&&!exactReady)mode='rhythm'; // Start auto counting for uncalibrated visitors.
-let recording=mode==='exact'&&!exactReady;
-let player=null,ready=false,isPlaying=false,lastTime=null,lastWall=null,nextBeat=0,nextCue=0,session=0,manualChanges=0;
-let interval=null;
-function validCount(v){return Number.isSafeInteger(v)&&v>=0&&v<=1000000000}
-function validTarget(v){return Number.isSafeInteger(v)&&v>0&&v<=1000000}
-function store(){try{localStorage.setItem(KEY,JSON.stringify({count,lifetime,target,mode,phase,paceSeconds,cues,exactReady}))}catch{status('Browser storage is unavailable; progress may not persist.')}}
-function status(v){$('status').textContent=v}
-function draw(){const n=count,completed=n%108;$('count').textContent=n.toLocaleString();$('goal').textContent=target.toLocaleString();$('progressLabel').textContent=n.toLocaleString()+' / '+target.toLocaleString()+' repetitions';$('malas').textContent=Math.floor(n/108)+' completed malas';$('progress').setAttribute('aria-valuemax',target);$('progress').setAttribute('aria-valuenow',Math.min(n,target));$('fill').style.width=Math.min(100,100*n/target)+'%';$('session').textContent=session.toLocaleString();$('lifetime').textContent=lifetime.toLocaleString();$('remaining').textContent=Math.max(0,target-n).toLocaleString();const holder=$('beads');holder.replaceChildren();const frag=document.createDocumentFragment();for(let i=0;i<108;i++){const x=document.createElement('span');x.className='bead'+(i<completed?' active':'');frag.appendChild(x)}holder.appendChild(frag)}
-function addOne(){count++;lifetime++;session++;store();draw();if(count===target)status('🙏 Target reached. Jai Shri Ram!')}
-function now(){try{return ready?player.getCurrentTime():NaN}catch{return NaN}}
-function state(){try{return ready?player.getPlayerState():-1}catch{return -1}}
-function playing(v){isPlaying=v;$('stage').classList.toggle('playing',v);$('play').textContent=v?'❚❚ Pause':'▶ Play mantra'}
-function resetScan(t){nextBeat=0;nextCue=0;if(mode==='rhythm'){const p=activePhase(),step=p.b-p.a;nextBeat=Math.max(0,Math.ceil((t-p.a-0.000001)/step))}while(nextCue<cues.length&&cues[nextCue]<t-.001)nextCue++}
-function tick(){if(!ready||!isPlaying||state()!==1)return;const t=now();if(!Number.isFinite(t))return;const wall=performance.now();if(lastTime===null){resetScan(t);lastTime=t;lastWall=wall;return}const dt=t-lastTime,elapsed=(wall-lastWall)/1000;
-if(dt<-.6){resetScan(Math.max(0,t-.3));lastTime=t;lastWall=wall;return}
-if(dt>Math.max(1.6,elapsed+1.35)){resetScan(t+.02);lastTime=t;lastWall=wall;status('Video seek detected. Skipped chants were not counted.');return}
-if(mode==='rhythm'){const p=activePhase(),step=p.b-p.a;let events=0;while(nextBeat<1000000&&p.a+step*nextBeat<=t+.02&&events<300){const mark=p.a+step*nextBeat;if(mark>lastTime+.005){addOne();events++}nextBeat++}}
-if(mode==='exact'&&exactReady){let events=0;while(nextCue<cues.length&&cues[nextCue]<=t+.02&&events<300){if(cues[nextCue]>lastTime+.005){addOne();events++}nextCue++}}
-lastTime=t;lastWall=wall}
-function clearTimes(){phase=null;firstTap=null;cues=[];exactReady=false;recording=mode==='exact';lastTime=null;nextBeat=0;nextCue=0;store();hint()}
-function hint(){$('paceBox').hidden=mode!=='rhythm';if(mode==='rhythm'){$('syncHint').textContent=phase?'Using two marked repetitions: '+(phase.b-phase.a).toFixed(2)+' seconds per jap (estimated). It can drift if the tune changes. Clear sync to recalibrate.':firstTap!==null?'Automatic estimates continue. Mark the end of the next full “Sita Ram” to complete calibration.':'Counting starts automatically while playing, with an approximate '+paceSeconds.toFixed(1)+' seconds per Jap. This is NOT verified song timing. Mark two consecutive completed “Sita Ram” chants for better synchronization.'}else{$('syncHint').textContent=exactReady?'Exact time markers saved ('+cues.length+'). Jap will increase as each marked point plays on the next loops. Choose Clear sync to re-record.':'Exact learning: play from the start and tap once at each full Sita Ram completion. This first listen counts your taps; after the video ends the recorded timestamps repeat automatically.'}}
-$('play').addEventListener('click',()=>{if(!ready){status('YouTube player is still loading. You may also use its built-in Play button.');return}if(state()===1){player.pauseVideo()}else{player.playVideo()}});
-$('plus').addEventListener('click',()=>{manualChanges++;addOne();if(count!==target)status('Manual jap counted.')});
-$('undo').addEventListener('click',()=>{if(count<=0)return;count--;lifetime=Math.max(0,lifetime-1);session=Math.max(0,session-1);store();draw();status('Last jap removed.')});
-$('reset').addEventListener('click',()=>{if(!confirm('Reset the jap count to zero? Your timing calibration will remain saved.'))return;count=0;session=0;store();draw();status('Count reset; synchronization preserved.')});
-$('targetSelect').addEventListener('change',e=>{if(e.target.value==='custom'){$('customBox').hidden=false;target=validTarget(+$('customTarget').value)?+$('customTarget').value:108}else{$('customBox').hidden=true;target=+e.target.value}store();draw()});
-$('customTarget').addEventListener('change',e=>{target=Math.min(1000000,Math.max(1,Math.floor(+e.target.value||108)));e.target.value=target;store();draw()});
-$('syncMode').addEventListener('change',e=>{mode=e.target.value;clearTimes();status(mode==='exact'?'Exact recording selected. Play from the beginning and mark every completed jap.':'Automatic estimated counting enabled. Press Play to start.')});
-$('clearSync').addEventListener('click',()=>{clearTimes();status('Synchronization cleared. The jap counter was preserved.')});
-$('mark').addEventListener('click',()=>{const t=now();if(!Number.isFinite(t)||state()!==1){status('Play the YouTube video before marking a chant.');return}
-if(mode==='rhythm'){if(phase){status('Rhythm already calibrated. Use Clear sync to start again.');return}if(firstTap===null){firstTap=t;status('First timing mark saved. Tap again after the next completed jap.')}else{const gap=t-firstTap;if(gap<.6||gap>45){status('Marks must be between 0.6 and 45 seconds apart. Please try the second mark again.');return}phase={a:firstTap,b:t};firstTap=null;nextBeat=2;lastTime=t;lastWall=performance.now();store();status('Rhythm synchronized: approximately one jap every '+gap.toFixed(2)+' seconds. Previous estimated counts remain unchanged.')}hint()}
-else{if(exactReady){status('Exact markers already saved. Clear sync to relearn them.');return}if(cues.length&&t<=cues[cues.length-1]+.35){status('Wait until the next complete Sita Ram before marking.');return}cues.push(t);addOne();store();status('Marked completion at '+t.toFixed(1)+'s · '+cues.length+' cue points saved.');hint()}}
-);
-function onYTReady(ev){ready=true;player=ev.target;$('play').disabled=false;status('Ready. Play Sita Ram, then synchronize jap completion with the tune.');hint();lastTime=null}
-function onYTState(ev){const Y=window.YT&&window.YT.PlayerState;if(!Y)return;if(ev.data===Y.PLAYING){playing(true);lastTime=null;lastWall=null;if(mode==='exact'&&recording&&cues.length===0)status('Mark each complete Sita Ram to learn exact timings.');else if(mode==='rhythm'&&!phase)status('Auto-counting approximately every '+paceSeconds.toFixed(1)+' seconds (not verified). Mark two repetitions to sync.');else if(mode==='rhythm')status('Auto-counting using your marked chant interval.');}
-else{playing(false);lastTime=null;lastWall=null;
-if(ev.data===Y.ENDED){if(mode==='exact'&&recording&&cues.length){recording=false;exactReady=true;store();hint();status('Exact timestamps saved. Future loops count automatically.')}resetScan(0);try{player.seekTo(0,true);player.playVideo()}catch{status('The video ended; press Play to loop again.')}}}}
-function onYTError(event){playing(false);status('This YouTube recording is unavailable in the embedded player (error '+event.data+'). Open it directly on YouTube; automatic synchronization needs the embed.')}
-window.onYouTubeIframeAPIReady=function(){try{player=new YT.Player('youtube-player',{videoId:VIDEO_ID,width:'100%',height:'100%',playerVars:{playsinline:1,rel:0,controls:1},events:{onReady:onYTReady,onStateChange:onYTState,onError:onYTError}})}catch{status('The YouTube player could not be initialized.')}};
-const yt=document.createElement('script');yt.src='https://www.youtube.com/iframe_api';yt.async=true;yt.onerror=()=>status('YouTube API could not load. Check your browser network or privacy settings.');document.head.appendChild(yt);
-for(let i=0;i<12;i++){const span=document.createElement('span');span.className='particle';span.textContent=i%2?'राम':'सीता';span.style.setProperty('--deg',(i*30)+'deg');span.style.setProperty('--delay',(-i*.55)+'s');$('particles').appendChild(span)}
-$('play').disabled=true;
-if(['11','21','51','108','1008'].includes(String(target))){$('targetSelect').value=String(target)}else{$('targetSelect').value='custom';$('customBox').hidden=false;$('customTarget').value=target}
-$('openSettings').addEventListener('click',()=>{$('settingsDialog').showModal()});
-$('closeSettings').addEventListener('click',()=>{$('settingsDialog').close()});
-$('settingsDialog').addEventListener('click',e=>{if(e.target===$('settingsDialog'))e.target.close()});
-$('paceSeconds').value=paceSeconds;
-$('paceSeconds').addEventListener('change',e=>{let v=Number(e.target.value);paceSeconds=Number.isFinite(v)?Math.min(45,Math.max(.6,v)):DEFAULT_SECONDS;e.target.value=paceSeconds;phase=null;firstTap=null;resetScan(Math.max(0,now()||0));store();hint();status('Auto-count estimate set to one jap every '+paceSeconds.toFixed(1)+' seconds.')});
-$('syncMode').value=mode;draw();hint();interval=setInterval(tick,120);
+const KEY="japmala-sita-ram-audio-v1";
+function read(key){try{return JSON.parse(localStorage.getItem(key)||"{}")||{}}catch{return {}}}
+const prev=read("japmala-sita-ram-v2"), legacy=read("japmala-v1"), saved=read(KEY);
+const validCount=x=>Number.isSafeInteger(x)&&x>=0&&x<1000000000;
+const validGoal=x=>Number.isSafeInteger(x)&&x>=1&&x<=1000000;
+let count=validCount(saved.count)?saved.count:(validCount(prev.count)?prev.count:(validCount(legacy.records&&legacy.records.sita)?legacy.records.sita:0));
+let lifetime=validCount(saved.lifetime)?saved.lifetime:(validCount(prev.lifetime)?prev.lifetime:count);
+let goal=validGoal(saved.goal)?saved.goal:(validGoal(prev.target)?prev.target:108);
+let speed=Number.isFinite(saved.speed)&&saved.speed>=.65&&saved.speed<=1.25?saved.speed:.9;
+let ambient=saved.ambient!==false;
+let session=0, running=false, paused=false, token=0, utterance=null;
+const canSpeak=("speechSynthesis" in window)&&("SpeechSynthesisUtterance" in window);
+const synth=canSpeak?window.speechSynthesis:null;
+let context=null, ambienceGain=null, ambientNodes=[];
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({count,lifetime,goal,speed,ambient}))}catch{show("Local storage is unavailable; progress may not be saved.")}}
+function show(s){$("status").textContent=s}
+function render(){
+$("count").textContent=count.toLocaleString();$("targetNumber").textContent=goal.toLocaleString();
+$("countCaption").textContent=count.toLocaleString()+" of "+goal.toLocaleString()+" completed";
+$("malaCaption").textContent=Math.floor(count/108).toLocaleString()+" malas";
+$("progress").setAttribute("aria-valuemax",goal);$("progress").setAttribute("aria-valuenow",Math.min(goal,count));
+$("fill").style.width=Math.min(100,100*count/goal)+"%";
+$("session").textContent=session.toLocaleString();$("lifetime").textContent=lifetime.toLocaleString();$("remaining").textContent=Math.max(0,goal-count).toLocaleString();
+}
+function labelPlay(){
+$("orbital").classList.toggle("is-playing",running&&!paused);
+$("play").textContent=running?(paused?"▶ Resume":"❚❚ Pause"):"▶ Play chant";
+}
+function ambienceLevel(value){
+if(!context||!ambienceGain)return;
+try{ambienceGain.gain.setTargetAtTime(value,context.currentTime,.12)}catch{}
+}
+function initAmbience(){
+if(!ambient)return;
+try{
+const AudioClass=window.AudioContext||window.webkitAudioContext;if(!AudioClass)return;
+if(!context){
+context=new AudioClass();
+ambienceGain=context.createGain();ambienceGain.gain.value=0;ambienceGain.connect(context.destination);
+for(const [freq,vol] of [[130.81,.55],[196,.27],[261.62,.12]]){
+const o=context.createOscillator(),g=context.createGain();o.type="sine";o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(ambienceGain);o.start();ambientNodes.push(o);
+}
+}
+if(context.state==="suspended")context.resume().catch(()=>{});
+ambienceLevel(.028);
+}catch{show("Your browser could not start ambient sound; chanting will continue.")}
+}
+function stop(){
+running=false;paused=false;token++;labelPlay();
+if(synth){try{synth.cancel()}catch{}}
+ambienceLevel(0);
+}
+function chooseVoice(){
+const voices=typeof synth.getVoices==="function"?synth.getVoices():[];
+return voices.find(v=>/^hi(-|$)/i.test(v.lang))||voices.find(v=>/^en-IN$/i.test(v.lang))||voices.find(v=>/^en(-|$)/i.test(v.lang))||voices[0]||null;
+}
+function speakOnce(id){
+if(!running||paused||id!==token)return;
+const v=chooseVoice();
+const hindi=!!v&&/^hi(-|$)/i.test(v.lang);
+let u=new SpeechSynthesisUtterance(hindi?"सीता राम":"Seeta Ram");
+if(v)u.voice=v;u.lang=hindi?"hi-IN":v?v.lang:"en-IN";
+u.rate=speed;u.pitch=1;u.volume=1;
+u.onend=()=>{
+if(!running||paused||id!==token)return;
+count++;lifetime++;session++;persist();render();
+if(count===goal){stop();show("🙏 Jap target complete. Jai Siya Ram!");return}
+speakOnce(id);
+};
+u.onerror=(ev)=>{
+if(id!==token||!running)return;
+stop();show("The voice could not continue ("+(ev.error||"speech error")+"). Tap Play to retry.");
+};
+utterance=u;
+try{synth.speak(u)}catch{stop();show("Speech audio failed. Try a different browser.")}
+}
+function play(){
+if(!canSpeak){show("This browser does not support spoken audio. Try Chrome, Edge or Safari.");return}
+if(running){
+if(!paused){
+paused=true;try{synth.pause()}catch{};ambienceLevel(0);labelPlay();show("Chant paused.");return;
+}
+paused=false;try{synth.resume()}catch{};if(ambient)initAmbience();labelPlay();show("Chant resumed.");return;
+}
+running=true;paused=false;token++;try{synth.cancel()}catch{}
+labelPlay();initAmbience();show("Playing browser-generated Sita Ram. One Jap counts after each spoken phrase.");
+speakOnce(token);
+}
+$("play").addEventListener("click",play);
+$("manual").addEventListener("click",()=>{count++;lifetime++;session++;persist();render();show("One Jap added manually.")});
+$("undo").addEventListener("click",()=>{if(count<=0)return;count--;lifetime=Math.max(0,lifetime-1);session=Math.max(0,session-1);persist();render();show("Last Jap removed.")});
+$("reset").addEventListener("click",()=>{if(!confirm("Reset the Sita Ram Jap counter to zero?"))return;stop();count=0;session=0;persist();render();show("Current count reset.")});
+$("goalSelect").addEventListener("change",ev=>{
+if(ev.target.value==="custom"){$("customGoalWrap").hidden=false;goal=validGoal(+$("customGoal").value)?+$("customGoal").value:108}
+else{$("customGoalWrap").hidden=true;goal=+ev.target.value}
+persist();render();
+});
+$("customGoal").addEventListener("change",ev=>{const n=Math.floor(+ev.target.value);goal=validGoal(n)?n:108;ev.target.value=goal;persist();render()});
+$("pace").addEventListener("input",ev=>{speed=Number(ev.target.value);$("paceValue").textContent=speed.toFixed(2)+"×";persist()});
+$("ambient").addEventListener("change",ev=>{ambient=ev.target.checked;persist();if(!ambient)ambienceLevel(0);else if(running&&!paused)initAmbience()});
+$("settingsOpen").addEventListener("click",()=>$("settingsDialog").showModal());
+$("settingsClose").addEventListener("click",()=>$("settingsDialog").close());
+$("settingsDialog").addEventListener("click",ev=>{if(ev.target===$("settingsDialog"))ev.target.close()});
+for(let i=0;i<12;i++){const el=document.createElement("span");el.className="letter";el.textContent=i%2?"राम":"सीता";el.style.setProperty("--rot",(i*30)+"deg");el.style.setProperty("--delay",(-i*.55)+"s");$("letters").appendChild(el)}
+if(["11","21","51","108","1008"].includes(String(goal)))$("goalSelect").value=String(goal);
+else{$("goalSelect").value="custom";$("customGoalWrap").hidden=false;$("customGoal").value=goal}
+$("pace").value=speed;$("paceValue").textContent=speed.toFixed(2)+"×";$("ambient").checked=ambient;
+if(!canSpeak){$("play").disabled=true;show("Speech audio is not available in this browser. Manual counting still works.")}
+render();labelPlay();
 })();
-</script></body></html>
+</script>
+</body></html>
