@@ -1,37 +1,35 @@
-# 🪷 JapMala — Digital Mantra Counter
+# ∞ JapMala — Sita Ram Jap Counter
 
-A lightweight, mobile-friendly chanting website for **any mantra** with configurable repetition goals.
+JapMala is a minimalist, static website centered around a single Sita Ram chant.
 
-## Features
-- Sita Ram, Om Namah Shivaya, Shri Ram Jai Ram, Gayatri Mantra, Swaminarayan, and custom mantra text.
-- Targets: 11, 21, 51, 108, 1008 or a custom number.
-- Manual **+1 Jap** button and Undo.
-- Automatic counting **once per completed audio file** and seamless looping attempts.
-- 108-bead progress display and completed mala count.
-- Saved counts by mantra using browser localStorage.
-- No build step, account, analytics, or server required.
+**Selected recording:** https://www.youtube.com/watch?v=c3K1BWeIZyo
 
-## Run
-Open `index.html` in a modern browser, or serve it locally using:
+## What's included
 
-```bash
-python -m http.server 8000
-```
+- Embedded YouTube playback of the selected recording (no downloaded or redistributed audio).
+- Continuous video looping when YouTube embedding and playback are permitted.
+- Glowing animated infinity sign: completed Jap in the left loop, target on the right.
+- Animated outward-flowing `सीता राम` text and rotating Devanagari ring while playing.
+- Custom Jap targets (11, 21, 51, 108, 1008, or a custom number), 108 beads and local progress.
+- Manually count or undo individual repetitions.
+- Two ways to synchronize automatic counting with the chant's **video playback time**:
+  - **Tune rhythm — estimated:** While playing, click *Mark completed jap* at the end of two consecutive repetitions. Those two timestamps define an estimated duration per Jap, applied to subsequent playback.
+  - **Exact timestamps — learn once:** Set sync mode to *Exact timestamps*, play the full song and tap *Mark completed jap* after each complete repetition. When the video finishes, the saved timestamps replay on following loops, adding one Jap at each marked completion.
 
-Then open `http://localhost:8000`.
+## Counting accuracy
 
-## Publish with GitHub Pages
-1. Go to this repository's **Settings → Pages**.
-2. Under *Build and deployment*, select **Deploy from a branch**.
-3. Select **main**, folder **/(root)**, and Save.
-4. The public website should become available at **https://abhikakadiya2301.github.io/japmala/** once GitHub deploys it.
+**YouTube's embedded player API supplies video time, not raw audio.** The app cannot recognize each mantra directly from its sound and cannot automatically distinguish musical beats from repetitions. Rhythm estimation is only accurate for uniform pacing and may drift if the tempo or chant arrangement changes. Exact mode is accurate relative to the timestamps you mark. Playback seeking does not count skipped portions. A 1-second discontinuity threshold helps prevent false counts on a seek.
 
-## Important: accurate chanting counts
-The application cannot automatically recognize the number of words/mantras inside arbitrary songs. **Automatic count = 1 whenever the selected audio clip reaches its end**. For accurate auto-counting, supply an audio recording containing exactly **one** full mantra repetition (one Jap). The site replays it after each completion. If you use a full devotional track with many repetitions, use manual counting instead.
+On first listen using exact mode, pressing the mark button also increments the count. Future loops use the saved markers instead; avoid marking again after learning is complete. You can correct mistakes with Undo. Sync settings and Jap totals are stored in browser localStorage; they do not transfer between devices.
 
-Upload your own or a properly licensed audio clip through the web page. It remains locally in your browser, and you must reselect it after refreshing. No copyrighted audio is bundled with this repository.
+YouTube embedding availability, advertisements, third-party cookie policies, playback restrictions, and mobile background behavior depend on YouTube and the visitor's browser. If the video is blocked from embedding, follow the YouTube link.
 
-Counters are browser-local and should not be treated as verified across different devices; clearing browser data may erase them. Some browsers may restrict background playback.
+## Run and deploy
 
-## Tech stack
-Single static HTML/CSS/JavaScript file, with no dependencies.
+Run the static `index.html` through a local web server, such as `python -m http.server 8000` and visit http://localhost:8000 .
+
+To publish: GitHub repository **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
+
+Expected website: https://abhikakadiya2301.github.io/japmala/
+
+No build system, bundled audio, API keys, or paid hosting required.
