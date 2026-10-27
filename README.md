@@ -1,35 +1,46 @@
-# ∞ JapMala — Sita Ram Jap Counter
+# ∞ JapMala — Sita Ram Jap
 
-JapMala is a minimalist, static website centered around a single Sita Ram chant.
+A minimalist, single-screen, **audio-only** Sita Ram Jap counter hosted with GitHub Pages.
 
-**Selected recording:** https://www.youtube.com/watch?v=c3K1BWeIZyo
+Website (once GitHub Pages is enabled): https://abhikakadiya2301.github.io/japmala/
 
-## What's included
+## What it does
 
-- Embedded YouTube playback of the selected recording (no downloaded or redistributed audio).
-- Continuous video looping when YouTube embedding and playback are permitted.
-- Glowing animated infinity sign: **only numbers** inside the loops — completed Jap on the left, target on the right.
-- Animated outward-flowing `सीता राम` text and rotating Devanagari ring while playing.
-- Custom Jap targets (11, 21, 51, 108, 1008, or a custom number), 108 beads and local progress.
-- Manually count or undo individual repetitions.
-- Two ways to synchronize automatic counting with the chant's **video playback time**:
-  - **Automatic rhythm — estimated:** Jap counting starts on playback using a provisional **2.2 seconds per Jap** interval. This is **not measured from the actual singing** and can count during instrumental passages. In Settings, adjust the seconds-per-Jap value, or click *Mark jap* at the end of two consecutive full repetitions to calibrate the estimate for later repetitions. Mark taps used for rhythm calibration do not themselves add Jap.
-  - **Exact timestamps — learn once:** Set sync mode to *Exact timestamps*, play the full song and tap *Mark completed jap* after each complete repetition. When the video finishes, the saved timestamps replay on following loops, adding one Jap at each marked completion.
+- The large, glowing ∞ symbol shows **only numbers** inside the two loops: completed Jap (left), target (right).
+- Animated circular and floating **सीता राम** text runs while chanting.
+- Press **Play chant** to hear a browser-generated spoken **Sita Ram** in a continuous series.
+- **Automatic Jap counting** increments once at the completion of **each spoken phrase**, based on the browser's speech-synthesis completion event — not a guessed music tempo.
+- Choose targets of 11, 21, 51, 108, 1008 or a custom goal under ⚙ Settings.
+- Pause / resume, manually add Jap, undo, adjust voice speed, optionally enable/disable an original ambient drone.
+- Saves the counter on this device in localStorage (attempts to migrate earlier JapMala progress).
+- No video, no embedded YouTube player, no third-party scripts and no audio files in the repository.
 
-## Counting accuracy
+## Important: this is **not** the linked YouTube song
 
-**YouTube's embedded player API supplies video time, not raw audio.** The app cannot recognize each mantra directly from its sound and cannot automatically distinguish musical beats from repetitions. The default 2.2-second interval is only a starting guess, not verified from the recording. Rhythm counting is an estimate for uniform pacing and may drift, especially during instrumental introductions or musical changes. Exact mode is accurate relative to the timestamps you mark. Playback seeking does not count skipped portions. A 1-second discontinuity threshold helps prevent false counts on a seek.
+The original reference was https://www.youtube.com/watch?v=c3K1BWeIZyo .
 
-On first listen using exact mode, pressing the mark button also increments the count. Future loops use the saved markers instead; avoid marking again after learning is complete. You can correct mistakes with Undo. Sync settings and Jap totals are stored in browser localStorage; they do not transfer between devices.
+**Its audio is not downloaded, extracted, embedded or hosted.** The current audio-only version instead uses the browser's speech-synthesis voice (Devanagari if a Hindi voice is available; otherwise “Seeta Ram” in a fallback voice). The optional low-volume ambient sound is an original oscillator-based background, **not** the original music.
 
-YouTube embedding availability, advertisements, third-party cookie policies, playback restrictions, and mobile background behavior depend on YouTube and the visitor's browser. If the video is blocked from embedding, follow the YouTube link.
+If you want that **exact** song without video, supply a properly licensed standalone audio file you have permission to host. That is a separate integration. A long recording containing many mantra repetitions will also need validated repetition timings or segmented audio for accurate Jap counts.
 
-## Run and deploy
+## How to run
 
-Run the static `index.html` through a local web server, such as `python -m http.server 8000` and visit http://localhost:8000 .
+Open `index.html` in Chrome, Edge or Safari, or run:
 
-To publish: GitHub repository **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
+```sh
+python -m http.server 8000
+```
 
-Expected website: https://abhikakadiya2301.github.io/japmala/
+Then visit http://localhost:8000 .
 
-No build system, bundled audio, API keys, or paid hosting required.
+## Publish with GitHub Pages
+
+Under **Settings → Pages**, choose **Deploy from a branch → main → / (root) → Save**.
+
+## Notes on accuracy and browser support
+
+- **A Jap is added only after the browser announces completion of one synthesis utterance** containing one Sita Ram repetition. This is much more defensible than estimating completions from a musical beat.
+- Speech voices, timing and quality depend on the device and installed browser voices. The fallback voice may not sound like traditional singing.
+- Browser backgrounding, audio focus, power saving or voice-service errors may interrupt continuous chanting. The app never counts an utterance that its playback loop did not complete in active mode.
+- Counts and settings are per-browser and can be lost if site storage is cleared.
+- Settings include manual corrections and a reset option.
