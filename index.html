@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#1a1512">
+<meta name="theme-color" content="#fff1d3">
 <meta name="description" content="JapMala is a serene, audio-only Sita Ram chanting experience with a glowing infinity counter and one count per completed recitation.">
 <title>JapMala — Sita Ram Jap</title>
 <style>
@@ -121,6 +121,69 @@ main{gap:clamp(4px,1.2vh,12px)}
 @media(max-height:570px){.orbital{width:min(92%,30dvh,200px);max-height:30dvh}.chant-audio{height:116px}}
 @media(max-height:450px){.page{height:auto;min-height:100dvh;overflow:visible}.orbital{width:150px;height:150px;max-height:none}}
 
+
+/* JapMala saffron theme: sunrise saffron, sandalwood ivory, deep copper text. */
+:root{
+  color-scheme:light;
+  --bg:#fff5df;
+  --ink:#632b0b;
+  --gold:#dc7115;
+  --muted:#87532c;
+  background:var(--bg);
+  color:var(--ink);
+}
+body{
+  background:
+    radial-gradient(ellipse 67% 46% at 50% 29%,#ffc261 0%,#ffe09c 27%,#fff0ce 64%,transparent 100%),
+    linear-gradient(160deg,#fff0d3 0%,#fff8e9 65%,#ffefd0 100%);
+}
+header{border-bottom-color:#d79455a6}
+.brand{color:#81350c}
+.header-note{color:#965627}
+.settings-toggle{border-color:#c78445;background:#ffe4b6;color:#88410e}
+.settings-toggle:hover{background:#ffcc81}
+.eyebrow{color:#a54a0c}
+h1{color:#79300b}
+.subtitle{color:#956035}
+.orbital:before{background:radial-gradient(circle,#ff9d3780 0%,#ffc87650 46%,transparent 76%);filter:blur(34px)}
+.outer-svg circle{stroke:#cf833e66}
+.outer-svg text{fill:#aa480b}
+.inf-base{
+  stroke:#b64b08;
+  filter:drop-shadow(0 0 7px #ffa738cc) drop-shadow(0 0 21px #e77419a6);
+}
+.inf-light{
+  stroke:#ffe5a0;
+  opacity:.85;
+  filter:drop-shadow(0 0 7px #ff941a);
+}
+@keyframes pulse{
+  50%{filter:drop-shadow(0 0 13px #ffb12b) drop-shadow(0 0 29px #f17715d1)}
+}
+.digit{color:#6b2808;text-shadow:0 1px 0 #ffedb7b8}
+.letter{color:#b24e0e}
+.progress-text{color:#88532c}
+.bar{background:#dfb782}
+.fill{background:linear-gradient(90deg,#df6e0c,#f6ab35)}
+footer{color:#996337}
+.footer-link{color:#8f3907}
+.footer-link:hover{color:#bc590c}
+.chant-audio{background:#fff9ec;border-color:#d8924d;box-shadow:0 8px 25px #bd741128}
+button{background:#fff0d7;color:#7e340d;border-color:#c88b51}
+button:hover{background:#ffd9a0}
+button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#ba4f0b}
+dialog{color:var(--ink);background:#fff7e7;border-color:#d69a5c;box-shadow:0 24px 72px #63301166}
+dialog::backdrop{background:#40200b9e}
+.modal h2{color:#83370b}
+.field label,.toggle-row{color:#874719}
+.field select,.field input[type=number]{color:#693009;background:#fff0d6;border-color:#ca8e4f}
+.field input[type=range]{accent-color:#d66b10}
+.note{color:#895c33}
+.metrics{border-top-color:#ddb681}
+.metrics strong{color:#7c350e}
+.metrics span{color:#895a2c}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 </style>
 </head>
 <body>
@@ -146,7 +209,7 @@ main{gap:clamp(4px,1.2vh,12px)}
 <div class="progress-text"><span id="countCaption">0 of 108 completed</span> · <span id="malaCaption">0 malas</span></div>
 <div class="bar" id="progress" role="progressbar" aria-label="Jap target progress" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0"><div class="fill" id="fill"></div></div>
 <div class="chant-audio" aria-label="Krishna Das Sita Ram audio">
-<iframe id="soundcloud-player" title="Krishna Das — Sita Ram audio player" width="100%" height="116" scrolling="no" frameborder="0" allow="autoplay" loading="eager" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrishnadasmusic%2Fsita-ram&amp;color=%23efc58d&amp;auto_play=false&amp;show_artwork=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;sharing=false&amp;download=false&amp;visual=false"></iframe>
+<iframe id="soundcloud-player" title="Krishna Das — Sita Ram audio player" width="100%" height="116" scrolling="no" frameborder="0" allow="autoplay" loading="eager" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrishnadasmusic%2Fsita-ram&amp;color=%23d96a11&amp;auto_play=false&amp;show_artwork=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;sharing=false&amp;download=false&amp;visual=false"></iframe>
 </div>
 <p class="sr-only" id="status" role="status" aria-live="polite">Loading Krishna Das Sita Ram audio player…</p>
 </main>
