@@ -90,6 +90,24 @@ main{gap:clamp(3px,.6vh,7px)}
 @media(max-height:720px){.orbital{width:min(90%,26dvh,220px);max-height:26dvh}.subtitle,.eyebrow{font-size:.57rem}.chant-video{height:200px}.progress-text{font-size:.65rem}.controls{gap:6px}}
 @media(max-width:550px){.orbital{width:min(95%,28dvh,235px);max-height:28dvh}.chant-video{width:min(100%,365px);height:200px}.controls button{padding:8px 11px}.primary{min-width:100px}}
 @media(max-height:570px){.page{height:auto;min-height:100dvh;overflow:visible}.orbital{width:158px;height:158px;max-height:none}.subtitle{display:none}main{gap:5px}}
+
+/* Infinity alignment: centers match the SVG's two loop centers. */
+.orbital{width:min(92%,36dvh,340px);max-height:36dvh}
+.inf-svg{left:4%;top:24%;width:92%;height:50%}
+.digit{width:22%;font-size:clamp(1.05rem,3.4vw,2rem);line-height:1.08}
+.digit.left{left:28.84%}
+.digit.right{left:71.16%}
+@media(max-width:550px){
+  .orbital{width:min(95%,30dvh,250px);max-height:30dvh}
+  .inf-svg{left:3%;top:24%;width:94%;height:50%}
+  .digit{width:22%;font-size:clamp(1rem,4.4vw,1.65rem)}
+  .digit.left{left:28.38%}
+  .digit.right{left:71.62%}
+}
+@media(max-height:720px){.orbital{width:min(92%,28dvh,255px);max-height:28dvh}}
+@media(max-width:550px) and (max-height:720px){.orbital{width:min(95%,26dvh,230px);max-height:26dvh}}
+@media(max-height:570px){.orbital{width:158px;height:158px;max-height:none}}
+
 </style>
 </head>
 <body>
