@@ -108,6 +108,7 @@ main{gap:clamp(3px,.6vh,7px)}
 @media(max-width:550px) and (max-height:720px){.orbital{width:min(95%,26dvh,230px);max-height:26dvh}}
 @media(max-height:570px){.orbital{width:158px;height:158px;max-height:none}}
 
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
@@ -133,8 +134,7 @@ main{gap:clamp(3px,.6vh,7px)}
 <div class="progress-text"><span id="countCaption">0 of 108 completed</span> · <span id="malaCaption">0 malas</span></div>
 <div class="bar" id="progress" role="progressbar" aria-label="Jap target progress" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0"><div class="fill" id="fill"></div></div>
 <div class="chant-video" id="videoFrame" aria-label="Krishna Das Sita Ram video player"><div id="youtube-player"></div></div>
-<div class="controls"><button class="primary" id="play" type="button" disabled>▶ Play video</button><button class="secondary" id="mark" type="button" title="Mark the end of a complete Sita Ram repetition">Mark jap</button><button class="secondary" id="manual" type="button">+1 Jap</button><button class="secondary" id="undo" type="button">↶ Undo</button></div>
-<p class="status" id="status" role="status" aria-live="polite">Loading the original Sita Ram YouTube video…</p>
+<p class="sr-only" id="status" role="status" aria-live="polite">Loading the Sita Ram YouTube video…</p>
 </main>
 <footer>Music plays directly from YouTube. <a class="footer-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">Open original video</a>.</footer>
 </div>
@@ -147,7 +147,7 @@ main{gap:clamp(3px,.6vh,7px)}
 <div class="field"><label for="countMode">Audio-sync counting method</label><select id="countMode"><option value="estimated">Estimated (starts automatically)</option><option value="exact">Exact markers (learn once)</option></select></div>
 <div id="estimateBox" class="field"><label for="secondsPerJap">Estimated seconds per Jap (not measured)</label><input type="number" id="secondsPerJap" min=".6" max="45" step=".1" value="2.2"></div>
 <p class="note" id="syncExplanation">Estimated counting begins as the video plays. Mark two consecutive complete Sita Ram chants to calibrate its pace.</p>
-<div class="modal-actions"><button id="clearSync" type="button">Clear synchronization</button><button id="reset" type="button">Reset current jap</button></div>
+<div class="modal-actions"><button id="mark" type="button" title="Mark the end of a complete Sita Ram repetition">Mark jap</button><button id="manual" type="button">+1 Jap</button><button id="undo" type="button">↶ Undo</button><button id="clearSync" type="button">Clear synchronization</button><button id="reset" type="button">Reset current jap</button></div>
 <div class="metrics"><div><strong id="session">0</strong><span>This session</span></div><div><strong id="lifetime">0</strong><span>All time</span></div><div><strong id="remaining">108</strong><span>Remaining</span></div></div>
 <p class="note">Automatic estimated counts are not verified against the recording and may count music or introductions. For accurate counts, choose Exact markers and tap Mark jap after each completed mantra during the first full listen; those times are reused on future loops. Seeking forward never counts skipped repetitions.</p>
 <p class="note">Video and sound come from the <a class="footer-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">YouTube recording you provided</a>. This website does not download, copy, or rehost the music. Embedding depends on the uploader and your browser.</p>
@@ -180,7 +180,7 @@ $("progress").setAttribute("aria-valuemax",goal);$("progress").setAttribute("ari
 $("fill").style.width=Math.min(100,count/goal*100)+"%";
 $("session").textContent=session.toLocaleString();$("lifetime").textContent=lifetime.toLocaleString();$("remaining").textContent=Math.max(0,goal-count).toLocaleString();
 }
-function setPlay(active){playing=active;$("orbital").classList.toggle("is-playing",active);$("play").textContent=active?"❚❚ Pause":"▶ Play video"}
+function setPlay(active){playing=active;$("orbital").classList.toggle("is-playing",active)}
 function addJap(){if(count>=1000000000)return;count++;lifetime++;session++;store();render();if(count===goal){status("🙏 Target complete. Jai Siya Ram!");if(playerReady)try{player.pauseVideo()}catch{}}}
 function videoTime(){try{return playerReady?player.getCurrentTime():NaN}catch{return NaN}}
 function isVideoPlaying(){try{return playerReady&&player.getPlayerState()===1}catch{return false}}
@@ -215,10 +215,6 @@ $("syncExplanation").textContent=mode==="exact"?(exactReady?"Saved "+cues.length
 (phase?"Estimated counting calibrated to "+(phase.b-phase.a).toFixed(2)+" seconds per Jap. It can drift when the song's tempo changes.":"Automatic counting uses an unverified interval of "+seconds.toFixed(1)+" seconds per Jap. Tap Mark jap twice at the end of two consecutive complete repetitions to calibrate it.");
 }
 function clearSync(){phase=null;firstTap=null;cues=[];exactReady=false;lastTime=null;nextBeat=0;nextCue=0;store();explain()}
-$("play").addEventListener("click",()=>{
-if(!playerReady){status("YouTube player is still loading.");return}
-try{if(isVideoPlaying())player.pauseVideo();else player.playVideo()}catch{status("Could not start the YouTube player. Use its own play button.")}
-});
 $("manual").addEventListener("click",()=>{addJap();if(count!==goal)status("One Jap counted manually.")});
 $("undo").addEventListener("click",()=>{if(count===0)return;count--;lifetime=Math.max(0,lifetime-1);session=Math.max(0,session-1);store();render();status("Last Jap removed.")});
 $("reset").addEventListener("click",()=>{if(!confirm("Reset the Jap counter to zero? Your sync marks will remain saved."))return;count=0;session=0;store();render();status("Jap counter reset.")});
@@ -245,7 +241,7 @@ $("clearSync").addEventListener("click",()=>{clearSync();status("Saved sync clea
 $("settingsOpen").addEventListener("click",()=>$("settingsDialog").showModal());
 $("settingsClose").addEventListener("click",()=>$("settingsDialog").close());
 $("settingsDialog").addEventListener("click",ev=>{if(ev.target===$("settingsDialog"))ev.target.close()});
-function onReady(ev){player=ev.target;playerReady=true;$("play").disabled=false;status("Krishna Das Sita Ram video ready. Press Play to listen.");}
+function onReady(ev){player=ev.target;playerReady=true;status("Krishna Das Sita Ram video ready. Use the YouTube player to listen.");}
 function onState(ev){
 if(!window.YT||!window.YT.PlayerState)return;
 const Y=window.YT.PlayerState;
