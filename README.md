@@ -1,45 +1,39 @@
 # ∞ JapMala — Sita Ram
 
-A minimal, single-screen mantra Jap counter with a centered glowing infinity symbol and **Krishna Das's Sita Ram playing through an audio-only SoundCloud widget**.
+JapMala is a minimal, saffron-themed mantra Jap counter with a centered glowing infinity symbol and the **Krishna Das Sita Ram YouTube video** displayed below it.
 
-## Audio
+**Original video:** https://www.youtube.com/watch?v=c3K1BWeIZyo
 
-- **Official artist SoundCloud track:** https://soundcloud.com/krishnadasmusic/sita-ram
-- **Original YouTube reference:** https://www.youtube.com/watch?v=c3K1BWeIZyo
-- The website uses SoundCloud's authorized embedded audio player, rather than extracting an audio track from YouTube.
-- **Version caution:** The tracks share the same name and artist and appear to be the same song, but the SoundCloud recording has not been independently matched sample-by-sample to the provided YouTube video.
-- No audio file is copied to or hosted by this GitHub repository.
+**Website:** https://abhikakadiya2301.github.io/japmala/
 
 ## Features
 
-- Infinity symbol with **only two numbers inside**: completed Jap (left) and Jap target (right).
-- Glowing infinity animation, circular and outward-flowing **सीता राम** text while audio plays.
-- Audio-only SoundCloud player, with its native Play/Pause controls and looping attempt via the official SoundCloud Widget API.
-- Targets: 11, 21, 51, 108, 1008, or a custom amount.
-- Automatic **estimated** Jap counting synchronized to SoundCloud's real track playback position, with settings to recalibrate or to manually record exact timings.
-- A simple main page with extra timing, manual +1, Undo and Reset controls in ⚙ Settings.
-- Local progress saving in the browser. It attempts to preserve saved JapMala progress from earlier versions.
+- The original YouTube video is embedded with the YouTube IFrame Player API, including its native playback controls. The video remains visible; no audio is downloaded, extracted, or rehosted.
+- The center infinity loops show only numbers: completed Japs on the left, target Japs on the right.
+- Minimal saffron and sandalwood-ivory palette with a glowing infinity and floating **सीता राम** text during playback.
+- Customizable targets: 11, 21, 51, 108, 1008, or a custom goal.
+- Automatic estimated counts based on playback position (see accuracy warning below).
+- Settings (⚙) include manual +1, Mark jap, Undo, Reset and synchronization options, keeping the main screen uncluttered.
+- Per-browser local progress persistence.
 
-## Counting limitations
+## Counting accuracy
 
-SoundCloud's embedded widget exposes track playback position, not the raw audio needed to detect each vocal repetition. Therefore:
+The YouTube IFrame API exposes playback position but **does not provide audio-content recognition**.
 
-1. **Estimated mode** initially uses a provisional, *unverified* 2.2-second interval and starts counting when the artist's track plays. It can count incorrectly during instrumental sections, introductions, and changes in singing speed.
-2. **Calibrate interval:** Listen and tap **Mark jap** in Settings at the end of two consecutive complete repetitions. The difference becomes the estimated interval for later counts.
-3. **Exact timestamps:** Choose *Exact markers* in Settings and mark the end of each repetition throughout the first full playback. At track completion, the recorded cue points are saved and subsequent loops count at those timestamps.
+- **Estimated mode (default):** Uses an initial, unverified **2.2 seconds per Jap** assumption. It is not aligned to verified chant repetitions and can overcount musical passages or be incorrect when the tune changes.
+- **Calibrated estimate:** In Settings, press **Mark jap** at the end of two consecutive complete chants to set an estimated interval.
+- **Exact markers:** In Settings choose *Exact markers*, then play the song from the beginning and mark the end of every actual Sita Ram repetition during the first full play. Saved timestamps are then reused on following loops. Accuracy depends on your manual timing.
 
-Seeking forward does not count skipped portions. These timestamps are not pre-verified; for true accuracy, manually validate each repetition against the authorized source audio. Actual playback, embedding permission, automatic replay, and background playback depend on SoundCloud and the browser.
+Forward seeks do not add skipped Japs. YouTube embedding, looping, ads and background behavior are subject to YouTube and the browser.
 
-## Run and deploy
+## Local setup and deployment
 
-Open `index.html` in a browser, or start a local server:
+Open `index.html` in your browser, or run:
 
-```bash
+```sh
 python -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Then visit http://localhost:8000.
 
-For GitHub Pages: repository **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
-
-Expected URL: https://abhikakadiya2301.github.io/japmala/
+For GitHub Pages: **Settings → Pages → Deploy from a branch → main → / (root) → Save**.
