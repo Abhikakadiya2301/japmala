@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#fff1d3">
-<meta name="description" content="JapMala is a serene, audio-only Sita Ram chanting experience with a glowing infinity counter and one count per completed recitation.">
+<meta name="description" content="JapMala is a Sita Ram chanting experience with Krishna Das music on YouTube, a glowing infinity counter and minimalist saffron design.">
 <title>JapMala — Sita Ram Jap</title>
 <style>
 :root{color-scheme:dark;--bg:#1a1512;--ink:#f2e5d6;--gold:#f0c38a;--muted:#b09b86;font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
@@ -109,19 +109,6 @@ main{gap:clamp(3px,.6vh,7px)}
 @media(max-height:570px){.orbital{width:158px;height:158px;max-height:none}}
 
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
-/* Audio-only player: no video surface. Keep infinity large and centered. */
-.chant-audio{width:min(100%,475px);height:116px;min-height:116px;border:1px solid #755a42;border-radius:12px;overflow:hidden;background:#241b16;flex-shrink:0}
-.chant-audio iframe{display:block;width:100%;height:116px;border:0}
-.orbital{width:min(93%,43dvh,405px);max-height:43dvh}
-.page{height:100dvh;min-height:100dvh}
-main{gap:clamp(4px,1.2vh,12px)}
-@media(max-height:740px){.orbital{width:min(92%,38dvh,345px);max-height:38dvh}}
-@media(max-width:550px){.orbital{width:min(95%,41dvh,355px);max-height:41dvh}.chant-audio{width:min(100%,420px)}}
-@media(max-height:570px){.orbital{width:min(92%,30dvh,200px);max-height:30dvh}.chant-audio{height:116px}}
-@media(max-height:450px){.page{height:auto;min-height:100dvh;overflow:visible}.orbital{width:150px;height:150px;max-height:none}}
-
-
 /* JapMala saffron theme: sunrise saffron, sandalwood ivory, deep copper text. */
 :root{
   color-scheme:light;
@@ -168,7 +155,7 @@ h1{color:#79300b}
 footer{color:#996337}
 .footer-link{color:#8f3907}
 .footer-link:hover{color:#bc590c}
-.chant-audio{background:#fff9ec;border-color:#d8924d;box-shadow:0 8px 25px #bd741128}
+.chant-video{background:#fff9ec;border-color:#d8924d;box-shadow:0 8px 25px #bd741128}
 button{background:#fff0d7;color:#7e340d;border-color:#c88b51}
 button:hover{background:#ffd9a0}
 button:focus-visible,input:focus-visible,select:focus-visible{outline-color:#ba4f0b}
@@ -183,6 +170,7 @@ dialog::backdrop{background:#40200b9e}
 .metrics strong{color:#7c350e}
 .metrics span{color:#895a2c}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
 
 </style>
 </head>
@@ -208,12 +196,10 @@ dialog::backdrop{background:#40200b9e}
 </div>
 <div class="progress-text"><span id="countCaption">0 of 108 completed</span> · <span id="malaCaption">0 malas</span></div>
 <div class="bar" id="progress" role="progressbar" aria-label="Jap target progress" aria-valuemin="0" aria-valuemax="108" aria-valuenow="0"><div class="fill" id="fill"></div></div>
-<div class="chant-audio" aria-label="Krishna Das Sita Ram audio">
-<iframe id="soundcloud-player" title="Krishna Das — Sita Ram audio player" width="100%" height="116" scrolling="no" frameborder="0" allow="autoplay" loading="eager" src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkrishnadasmusic%2Fsita-ram&amp;color=%23d96a11&amp;auto_play=false&amp;show_artwork=false&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;sharing=false&amp;download=false&amp;visual=false"></iframe>
-</div>
-<p class="sr-only" id="status" role="status" aria-live="polite">Loading Krishna Das Sita Ram audio player…</p>
+<div class="chant-video" id="videoFrame" aria-label="Krishna Das Sita Ram YouTube video player"><div id="youtube-player"></div></div>
+<p class="sr-only" id="status" role="status" aria-live="polite">Loading the Sita Ram YouTube video…</p>
 </main>
-<footer>Audio streamed via <a class="footer-link" href="https://soundcloud.com/krishnadasmusic/sita-ram" target="_blank" rel="noopener noreferrer">Krishna Das on SoundCloud</a> · <a class="footer-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">Original YouTube link</a></footer>
+<footer>Music plays directly from YouTube. <a class="footer-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">Open original video</a>.</footer>
 </div>
 <dialog id="settingsDialog" aria-labelledby="settingsHeading"><div class="modal">
 <div class="modal-head"><h2 id="settingsHeading">Jap settings</h2><button type="button" class="close" id="settingsClose" aria-label="Close settings">×</button></div>
@@ -227,13 +213,13 @@ dialog::backdrop{background:#40200b9e}
 <div class="modal-actions"><button id="mark" type="button" title="Mark the end of a complete Sita Ram repetition">Mark jap</button><button id="manual" type="button">+1 Jap</button><button id="undo" type="button">↶ Undo</button><button id="clearSync" type="button">Clear synchronization</button><button id="reset" type="button">Reset current jap</button></div>
 <div class="metrics"><div><strong id="session">0</strong><span>This session</span></div><div><strong id="lifetime">0</strong><span>All time</span></div><div><strong id="remaining">108</strong><span>Remaining</span></div></div>
 <p class="note">Automatic estimated counts are not verified against the recording and may count music or introductions. For accurate counts, choose Exact markers and tap Mark jap after each completed mantra during the first full listen; those times are reused on future loops. Seeking forward never counts skipped repetitions.</p>
-<p class="note">Audio streams from Krishna Das’s <a class="footer-link" href="https://soundcloud.com/krishnadasmusic/sita-ram" target="_blank" rel="noopener noreferrer">official SoundCloud track</a> through its embedded player. No video is shown and the site never downloads or hosts copyrighted audio. This appears to be the same song as your YouTube link, but the exact recording/version has not been independently verified. Playback and looping depend on SoundCloud and the browser.</p>
+<p class="note">Video and sound come from the <a class="footer-link" href="https://www.youtube.com/watch?v=c3K1BWeIZyo" target="_blank" rel="noopener noreferrer">YouTube recording you provided</a>. This website does not download, copy, or rehost the music. Embedding depends on the uploader and your browser.</p>
 </div></dialog>
 <script>
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const TRACK="https://soundcloud.com/krishnadasmusic/sita-ram",KEY="japmala-sita-ram-video-v3";
+const VIDEO_ID="c3K1BWeIZyo",KEY="japmala-sita-ram-video-v3";
 const read=k=>{try{return JSON.parse(localStorage.getItem(k)||"{}")||{}}catch{return {}}};
 const previous=read("japmala-sita-ram-audio-v1"),earlier=read("japmala-sita-ram-v2"),legacy=read("japmala-v1"),saved=read(KEY);
 const validCount=n=>Number.isSafeInteger(n)&&n>=0&&n<1000000000;
@@ -246,8 +232,7 @@ let seconds=Number.isFinite(saved.seconds)&&saved.seconds>=.6&&saved.seconds<=45
 let phase=saved.phase&&Number.isFinite(saved.phase.a)&&Number.isFinite(saved.phase.b)&&saved.phase.b>saved.phase.a?{a:saved.phase.a,b:saved.phase.b}:null;
 let cues=Array.isArray(saved.cues)?saved.cues.filter(x=>Number.isFinite(x)&&x>=0).sort((a,b)=>a-b).slice(0,50000):[];
 let exactReady=!!saved.exactReady&&cues.length>0;
-let firstTap=null,session=0,widget=null,widgetReady=false,playing=false,lastTime=null,lastWall=null,nextBeat=0,nextCue=0,latestPosition=0;
-let pendingLoop=false;
+let firstTap=null,session=0,player=null,playerReady=false,playing=false,lastTime=null,lastWall=null,nextBeat=0,nextCue=0;
 function store(){try{localStorage.setItem(KEY,JSON.stringify({count,lifetime,goal,mode,seconds,phase,cues,exactReady}))}catch{status("Progress could not be saved in this browser.")}}
 function status(s){$("status").textContent=s}
 function render(){
@@ -259,21 +244,23 @@ $("fill").style.width=Math.min(100,count/goal*100)+"%";
 $("session").textContent=session.toLocaleString();$("lifetime").textContent=lifetime.toLocaleString();$("remaining").textContent=Math.max(0,goal-count).toLocaleString();
 }
 function setPlay(active){playing=active;$("orbital").classList.toggle("is-playing",active)}
-function addJap(){if(count>=1000000000)return;count++;lifetime++;session++;store();render();if(count===goal){status("🙏 Target complete. Jai Siya Ram!");if(widgetReady)widget.pause()}}
+function addJap(){if(count>=1000000000)return;count++;lifetime++;session++;store();render();if(count===goal){status("🙏 Target complete. Jai Siya Ram!");if(playerReady)try{player.pauseVideo()}catch{}}}
+function videoTime(){try{return playerReady?player.getCurrentTime():NaN}catch{return NaN}}
+function isVideoPlaying(){try{return playerReady&&player.getPlayerState()===1}catch{return false}}
 const activePhase=()=>phase||{a:0,b:seconds};
 function resetScan(t){
 nextBeat=0;nextCue=0;
-if(mode==="estimated"){const p=activePhase(),step=p.b-p.a;nextBeat=Math.max(0,Math.ceil((t-p.a-.000001)/step))}
+if(mode==="estimated"){const p=activePhase();nextBeat=Math.max(0,Math.ceil((t-p.a-.000001)/(p.b-p.a)))}
 while(nextCue<cues.length&&cues[nextCue]<t-.001)nextCue++;
 }
-function tick(t){
-if(!playing||!Number.isFinite(t)||t<0)return;
-latestPosition=t;
+function tick(){
+if(!playing||!isVideoPlaying())return;
+const t=videoTime();if(!Number.isFinite(t))return;
 const wall=performance.now();
 if(lastTime===null){resetScan(t);lastTime=t;lastWall=wall;return}
 const dt=t-lastTime,elapsed=(wall-lastWall)/1000;
 if(dt<-.6){resetScan(t);lastTime=t;lastWall=wall;return}
-if(dt>Math.max(2,elapsed+1.5)){resetScan(t+.02);lastTime=t;lastWall=wall;status("Audio seek detected; skipped chants were not counted.");return}
+if(dt>Math.max(1.6,elapsed+1.35)){resetScan(t+.03);lastTime=t;lastWall=wall;status("Playback skipped forward; skipped Japs were not counted.");return}
 if(mode==="estimated"){
 const p=activePhase(),step=p.b-p.a;let n=0;
 while(nextBeat<1000000&&p.a+step*nextBeat<=t+.02&&n<100){
@@ -281,67 +268,63 @@ const mark=p.a+step*nextBeat;
 if(mark>lastTime+.005){addJap();n++}nextBeat++;
 }
 }else if(exactReady){
-let n=0;
-while(nextCue<cues.length&&cues[nextCue]<=t+.02&&n<100){if(cues[nextCue]>lastTime+.005){addJap();n++}nextCue++}
+let n=0;while(nextCue<cues.length&&cues[nextCue]<=t+.02&&n<100){if(cues[nextCue]>lastTime+.005){addJap();n++}nextCue++}
 }
 lastTime=t;lastWall=wall;
 }
 function explain(){
 $("estimateBox").hidden=mode!=="estimated";
-$("syncExplanation").textContent=mode==="exact"?(exactReady?"Saved "+cues.length+" exact completion markers. They count automatically on each full playback. Clear synchronization to relearn.":"Exact learning: start from the beginning and press Mark jap whenever a full Sita Ram repetition ends. Each mark counts once on the first listen; future loops reuse the saved timestamps."):
-(phase?"Estimated interval calibrated to "+(phase.b-phase.a).toFixed(2)+" seconds per Jap; tempo variations can cause drift.":"Automatic counting currently uses an unverified "+seconds.toFixed(1)+" seconds per Jap. Mark two consecutive complete chants to improve the estimate.");
+$("syncExplanation").textContent=mode==="exact"?(exactReady?"Saved "+cues.length+" exact completion markers. They count automatically each time the video reaches them. Clear synchronization to relearn.":"Exact learning: play the full video and press Mark jap when each spoken Sita Ram finishes. During this first listen each mark adds one Jap; afterwards the timestamps automatically repeat."):
+(phase?"Estimated counting calibrated to "+(phase.b-phase.a).toFixed(2)+" seconds per Jap. It can drift when the song's tempo changes.":"Automatic counting uses an unverified interval of "+seconds.toFixed(1)+" seconds per Jap. Tap Mark jap twice at the end of two consecutive complete repetitions to calibrate it.");
 }
 function clearSync(){phase=null;firstTap=null;cues=[];exactReady=false;lastTime=null;nextBeat=0;nextCue=0;store();explain()}
 $("manual").addEventListener("click",()=>{addJap();if(count!==goal)status("One Jap counted manually.")});
 $("undo").addEventListener("click",()=>{if(count===0)return;count--;lifetime=Math.max(0,lifetime-1);session=Math.max(0,session-1);store();render();status("Last Jap removed.")});
-$("reset").addEventListener("click",()=>{if(!confirm("Reset Jap count to zero? Your saved sync remains."))return;count=0;session=0;store();render();status("Jap counter reset.")});
+$("reset").addEventListener("click",()=>{if(!confirm("Reset the Jap counter to zero? Your sync marks will remain saved."))return;count=0;session=0;store();render();status("Jap counter reset.")});
 $("mark").addEventListener("click",()=>{
-if(!widgetReady||!playing){status("Start the SoundCloud song before marking the end of a chant.");return}
-widget.getPosition(position=>{
-if(!Number.isFinite(position)||!playing)return;
-const t=position/1000;latestPosition=t;
+if(!isVideoPlaying()){status("Start the video first, then mark the end of a complete chant.");return}
+const t=videoTime();if(!Number.isFinite(t))return;
 if(mode==="estimated"){
-if(phase){status("Already calibrated. Use Clear synchronization to recalibrate.");return}
-if(firstTap===null){firstTap=t;status("First completion marked. Mark after the next completed Sita Ram.");return}
-const gap=t-firstTap;if(gap<.6||gap>45){status("Mark two repetitions between 0.6 and 45 seconds apart.");return}
-phase={a:firstTap,b:t};firstTap=null;nextBeat=2;lastTime=t;lastWall=performance.now();store();explain();status("Estimate calibrated: one jap every "+gap.toFixed(2)+" seconds.");
+if(phase){status("Already calibrated. Use Clear synchronization to mark another interval.");return}
+if(firstTap===null){firstTap=t;status("First timing mark saved. Mark again after the next complete Sita Ram.");return}
+const gap=t-firstTap;
+if(gap<.6||gap>45){status("Wait between 0.6 and 45 seconds between marks.");return}
+phase={a:firstTap,b:t};firstTap=null;nextBeat=2;lastTime=t;lastWall=performance.now();store();explain();status("Calibrated estimated counting at "+gap.toFixed(2)+" seconds per Jap.");
 }else{
-if(exactReady){status("Exact markers already saved; clear synchronization to relearn.");return}
-if(cues.length&&t-cues[cues.length-1]<.35){status("Wait until the next completed Sita Ram.");return}
-cues.push(t);addJap();store();status("Marked repetition at "+t.toFixed(1)+" seconds.");explain();
+if(exactReady){status("Exact marks are already saved. Clear synchronization to relearn.");return}
+if(cues.length&&t-cues[cues.length-1]<.35){status("Wait for the next complete mantra.");return}
+cues.push(t);addJap();store();status("Saved mantra completion at "+t.toFixed(1)+" seconds.");explain();
 }
 });
-});
-$("goalSelect").addEventListener("change",e=>{if(e.target.value==="custom"){$("customGoalWrap").hidden=false;goal=validGoal(+$("customGoal").value)?+$("customGoal").value:108}else{$("customGoalWrap").hidden=true;goal=+e.target.value}store();render()});
-$("customGoal").addEventListener("change",e=>{const n=Math.floor(+e.target.value);goal=validGoal(n)?n:108;e.target.value=goal;store();render()});
-$("countMode").addEventListener("change",e=>{mode=e.target.value;clearSync();status(mode==="exact"?"Exact timing learning enabled.":"Estimated counting enabled.")});
-$("secondsPerJap").addEventListener("change",e=>{const n=+e.target.value;seconds=Number.isFinite(n)?Math.min(45,Math.max(.6,n)):2.2;e.target.value=seconds;phase=null;firstTap=null;resetScan(latestPosition);store();explain();status("Estimated interval set to "+seconds.toFixed(1)+" seconds per Jap.")});
-$("clearSync").addEventListener("click",()=>{clearSync();status("Sync cleared; counts retained.")});
+$("goalSelect").addEventListener("change",ev=>{if(ev.target.value==="custom"){$("customGoalWrap").hidden=false;goal=validGoal(+$("customGoal").value)?+$("customGoal").value:108}else{$("customGoalWrap").hidden=true;goal=+ev.target.value}store();render()});
+$("customGoal").addEventListener("change",ev=>{const n=Math.floor(+ev.target.value);goal=validGoal(n)?n:108;ev.target.value=goal;store();render()});
+$("countMode").addEventListener("change",ev=>{mode=ev.target.value;clearSync();status(mode==="exact"?"Mark each finished chant during your first listen.":"Estimated auto counting enabled.")});
+$("secondsPerJap").addEventListener("change",ev=>{const n=+ev.target.value;seconds=Number.isFinite(n)?Math.min(45,Math.max(.6,n)):2.2;ev.target.value=seconds;phase=null;firstTap=null;resetScan(Math.max(0,videoTime()||0));store();explain();status("Estimated interval updated to "+seconds.toFixed(1)+" seconds per Jap.")});
+$("clearSync").addEventListener("click",()=>{clearSync();status("Saved sync cleared; Jap totals preserved.")});
 $("settingsOpen").addEventListener("click",()=>$("settingsDialog").showModal());
 $("settingsClose").addEventListener("click",()=>$("settingsDialog").close());
-$("settingsDialog").addEventListener("click",e=>{if(e.target===$("settingsDialog"))e.target.close()});
-function initializeWidget(){
-if(!window.SC||!window.SC.Widget){status("SoundCloud player is unavailable; use the SoundCloud link below.");return}
-widget=window.SC.Widget("soundcloud-player");
-const Events=window.SC.Widget.Events;
-widget.bind(Events.READY,()=>{widgetReady=true;status("Krishna Das Sita Ram audio is ready. Press Play in the SoundCloud player.");});
-widget.bind(Events.PLAY,()=>{setPlay(true);lastTime=null;lastWall=null;pendingLoop=false;status(mode==="estimated"?"Sita Ram is playing. Automatic count is estimated.":"Sita Ram is playing. Exact timing mode active.");});
-widget.bind(Events.PAUSE,()=>{setPlay(false);lastTime=null;lastWall=null});
-widget.bind(Events.PLAY_PROGRESS,event=>{if(event&&Number.isFinite(event.currentPosition))tick(event.currentPosition/1000)});
-widget.bind(Events.SEEK,event=>{if(!event||!Number.isFinite(event.currentPosition))return;const t=event.currentPosition/1000;resetScan(t+.02);lastTime=t;lastWall=performance.now();latestPosition=t});
-widget.bind(Events.FINISH,()=>{
+$("settingsDialog").addEventListener("click",ev=>{if(ev.target===$("settingsDialog"))ev.target.close()});
+function onReady(ev){player=ev.target;playerReady=true;status("Krishna Das Sita Ram video ready. Use the YouTube player to listen.");}
+function onState(ev){
+if(!window.YT||!window.YT.PlayerState)return;
+const Y=window.YT.PlayerState;
+if(ev.data===Y.PLAYING){setPlay(true);lastTime=null;lastWall=null;status(mode==="estimated"?"Playing original video · Jap counter is an estimate until calibrated.":"Playing original video · exact markers "+(exactReady?"active.":"need to be recorded."));return}
 setPlay(false);lastTime=null;lastWall=null;
-if(mode==="exact"&&!exactReady&&cues.length){exactReady=true;store();explain();status("Exact chant timing saved for future loops.")}
-if(pendingLoop)return;pendingLoop=true;resetScan(0);latestPosition=0;
-try{widget.seekTo(0);widget.play()}catch{pendingLoop=false;status("Track finished. Press Play in the SoundCloud widget to repeat.")}
-});
-widget.bind(Events.ERROR,()=>{setPlay(false);status("SoundCloud could not play this track. Try the artist's original SoundCloud page.")});
+if(ev.data===Y.ENDED){
+if(mode==="exact"&&!exactReady&&cues.length){exactReady=true;store();explain();status("Exact timestamps saved for future loops.")}
+resetScan(0);try{player.seekTo(0,true);player.playVideo()}catch{status("The video finished. Press Play to replay.")}
 }
-const script=document.createElement("script");script.src="https://w.soundcloud.com/player/api.js";script.async=true;script.onload=initializeWidget;script.onerror=()=>status("The SoundCloud audio API could not load.");document.head.appendChild(script);
+}
+function onError(ev){setPlay(false);status("YouTube playback unavailable (error "+ev.data+"). Try the original link below; the uploader may restrict embedding.")}
+window.onYouTubeIframeAPIReady=function(){
+try{player=new YT.Player("youtube-player",{height:"210",width:"370",videoId:VIDEO_ID,playerVars:{playsinline:1,controls:1,rel:0,loop:1,playlist:VIDEO_ID},events:{onReady:onReady,onStateChange:onState,onError:onError}})}
+catch{status("YouTube could not initialize. Open the original video link.")}
+};
+const script=document.createElement("script");script.src="https://www.youtube.com/iframe_api";script.async=true;script.onerror=()=>status("YouTube API blocked. Check your network or browser privacy settings.");document.head.appendChild(script);
 for(let i=0;i<12;i++){const el=document.createElement("span");el.className="letter";el.textContent=i%2?"राम":"सीता";el.style.setProperty("--rot",(i*30)+"deg");el.style.setProperty("--delay",(-i*.55)+"s");$("letters").appendChild(el)}
 if(["11","21","51","108","1008"].includes(String(goal)))$("goalSelect").value=String(goal);else{$("goalSelect").value="custom";$("customGoalWrap").hidden=false;$("customGoal").value=goal}
 $("countMode").value=mode;$("secondsPerJap").value=seconds;
-render();explain();
+render();explain();setInterval(tick,125);
 })();
 </script>
 </body></html>
